@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<components_list>
+
+<component>
+    <name>PUSCH_ESTIMATION</name>
+    <config>tst</config>
+    <info>"PUSCH_ESTIMATION Library"</info>
+</component>
+<component>
+    <name>ESTIMATION_TEST</name>
+    <config>tst</config>
+    <info>"DMRS_ESTIMATION_TEST Library"</info>
+</component>
+ 
+  
+</components_list>

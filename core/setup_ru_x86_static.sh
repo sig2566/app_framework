@@ -1,0 +1,4 @@
+export DPDK_INC_STATIC=$RTE_SDK_STATIC/include
+export DPDK_LIB_STATIC=$RTE_SDK_STATIC/lib
+
+

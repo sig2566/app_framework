@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<components_list>
+  <component>
+    <name>SAMPLE_MODULE</name>
+	<config>tst</config>
+    <info>Sample Module</info>
+  </component>
+  <component>
+    <name>TEST_MODULE</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+ <!-- 
+  <component>
+    <name>SCRAMBLER_MODULE</name>
+    <config>tst</config>
+    <info>"Scrambler Module"</info>
+  </component>
+
+  <component>
+    <name>MAIN_5G_HANDLER</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+  <component>
+    <name>CODE_BLOCK_MAIN</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+  <component>
+    <name>CODE_BLOCK_RX_MAIN</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+  -->
+
+</components_list>

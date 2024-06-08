@@ -1,0 +1,6 @@
+/NR_5G_SIM_back/
+
+# Test files #
+######################
+*.pcap
+*.dat

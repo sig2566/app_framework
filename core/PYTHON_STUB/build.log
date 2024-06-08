@@ -1,0 +1,80 @@
+./cpy5gstub.cc ./csim_control.cc ./python_api.cc
+cpy5gstub.o csim_control.o python_api.o
+g++ -I/opt/anaconda3/include/python3.8  -I/usr/include  -I. -I..//../common_src/Sys_API -I..//../common_src/Sys_API/common_intel -I..//../common_src/Sys_API/Module_API -DTIME_DATE=\"DATE:05/06/24_TIME:14:59:32\" -DMOD_NAME=\"py5Gstub\"  -DARCH_X86   -DINTEL   -fPIC -c ./cpy5gstub.cc ./csim_control.cc ./python_api.cc
+In file included from /opt/boost_1_85_0/boost/python/detail/is_xxx.hpp:8,
+                 from /opt/boost_1_85_0/boost/python/detail/is_auto_ptr.hpp:9,
+                 from /opt/boost_1_85_0/boost/python/detail/copy_ctor_mutates_rhs.hpp:8,
+                 from /opt/boost_1_85_0/boost/python/detail/value_arg.hpp:7,
+                 from /opt/boost_1_85_0/boost/python/object/forward.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/object/pointer_holder.hpp:16,
+                 from /opt/boost_1_85_0/boost/python/to_python_indirect.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/converter/arg_to_python.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/call.hpp:15,
+                 from /opt/boost_1_85_0/boost/python/object_core.hpp:14,
+                 from /opt/boost_1_85_0/boost/python/args.hpp:22,
+                 from /opt/boost_1_85_0/boost/python.hpp:11,
+                 from ./cpy5gstub.h:18,
+                 from ./cpy5gstub.cc:10:
+/opt/boost_1_85_0/boost/python/detail/is_auto_ptr.hpp:17:40: warning: ‘template<class> class std::auto_ptr’ is deprecated [-Wdeprecated-declarations]
+   17 | BOOST_PYTHON_IS_XXX_DEF(auto_ptr, std::auto_ptr, 1)
+      |                                        ^~~~~~~~
+/opt/boost_1_85_0/boost/detail/is_xxx.hpp:20:4: note: in definition of macro ‘BOOST_DETAIL_IS_XXX_DEF’
+   20 |    qualified_name< BOOST_PP_ENUM_PARAMS_Z(1, nargs, T) >        \
+      |    ^~~~~~~~~~~~~~
+/opt/boost_1_85_0/boost/python/detail/is_auto_ptr.hpp:17:1: note: in expansion of macro ‘BOOST_PYTHON_IS_XXX_DEF’
+   17 | BOOST_PYTHON_IS_XXX_DEF(auto_ptr, std::auto_ptr, 1)
+      | ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/rh/devtoolset-9/root/usr/include/c++/9/memory:80,
+                 from /opt/boost_1_85_0/boost/function/function_base.hpp:34,
+                 from /opt/boost_1_85_0/boost/function/function_template.hpp:14,
+                 from /opt/boost_1_85_0/boost/function/function0.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/errors.hpp:13,
+                 from /opt/boost_1_85_0/boost/python/handle.hpp:11,
+                 from /opt/boost_1_85_0/boost/python/args_fwd.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/args.hpp:10,
+                 from /opt/boost_1_85_0/boost/python.hpp:11,
+                 from ./cpy5gstub.h:18,
+                 from ./cpy5gstub.cc:10:
+/opt/rh/devtoolset-9/root/usr/include/c++/9/bits/unique_ptr.h:53:28: note: declared here
+   53 |   template<typename> class auto_ptr;
+      |                            ^~~~~~~~
+In file included from /opt/boost_1_85_0/boost/python/detail/is_xxx.hpp:8,
+                 from /opt/boost_1_85_0/boost/python/detail/is_auto_ptr.hpp:9,
+                 from /opt/boost_1_85_0/boost/python/detail/copy_ctor_mutates_rhs.hpp:8,
+                 from /opt/boost_1_85_0/boost/python/detail/value_arg.hpp:7,
+                 from /opt/boost_1_85_0/boost/python/object/forward.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/object/pointer_holder.hpp:16,
+                 from /opt/boost_1_85_0/boost/python/to_python_indirect.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/converter/arg_to_python.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/call.hpp:15,
+                 from /opt/boost_1_85_0/boost/python/object_core.hpp:14,
+                 from /opt/boost_1_85_0/boost/python/args.hpp:22,
+                 from /opt/boost_1_85_0/boost/python.hpp:11,
+                 from ./cpy5gstub.h:18,
+                 from ./python_api.cc:10:
+/opt/boost_1_85_0/boost/python/detail/is_auto_ptr.hpp:17:40: warning: ‘template<class> class std::auto_ptr’ is deprecated [-Wdeprecated-declarations]
+   17 | BOOST_PYTHON_IS_XXX_DEF(auto_ptr, std::auto_ptr, 1)
+      |                                        ^~~~~~~~
+/opt/boost_1_85_0/boost/detail/is_xxx.hpp:20:4: note: in definition of macro ‘BOOST_DETAIL_IS_XXX_DEF’
+   20 |    qualified_name< BOOST_PP_ENUM_PARAMS_Z(1, nargs, T) >        \
+      |    ^~~~~~~~~~~~~~
+/opt/boost_1_85_0/boost/python/detail/is_auto_ptr.hpp:17:1: note: in expansion of macro ‘BOOST_PYTHON_IS_XXX_DEF’
+   17 | BOOST_PYTHON_IS_XXX_DEF(auto_ptr, std::auto_ptr, 1)
+      | ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/rh/devtoolset-9/root/usr/include/c++/9/memory:80,
+                 from /opt/boost_1_85_0/boost/function/function_base.hpp:34,
+                 from /opt/boost_1_85_0/boost/function/function_template.hpp:14,
+                 from /opt/boost_1_85_0/boost/function/function0.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/errors.hpp:13,
+                 from /opt/boost_1_85_0/boost/python/handle.hpp:11,
+                 from /opt/boost_1_85_0/boost/python/args_fwd.hpp:10,
+                 from /opt/boost_1_85_0/boost/python/args.hpp:10,
+                 from /opt/boost_1_85_0/boost/python.hpp:11,
+                 from ./cpy5gstub.h:18,
+                 from ./python_api.cc:10:
+/opt/rh/devtoolset-9/root/usr/include/c++/9/bits/unique_ptr.h:53:28: note: declared here
+   53 |   template<typename> class auto_ptr;
+      |                            ^~~~~~~~
+/opt/boost_1_85_0:/usr/local/include:/opt/boost_1_85_0:/usr/local/include:/opt/boost_1_85_0:/usr/local/include:/opt/boost_1_85_0:/usr/local/include:
+cpy5gstub.o csim_control.o python_api.o
+g++ -shared -Wl,--export-dynamic cpy5gstub.o csim_control.o python_api.o  -L..//../bin -L/opt/boost_1_69_0_gcc4.8/boost_1_69_0/stage/lib -lboost_thread-mt -lboost_python  -o ..//../bin/py5Gstub.so

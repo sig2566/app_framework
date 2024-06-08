@@ -1,0 +1,6 @@
+./sample_module.cc
+sample_module.o
+g++  -I. -I../../../core/../common_src/Sys_API -I../../../core/../common_src/Sys_API/common_intel -I../../../core/../common_src/Sys_API/Module_API -DTIME_DATE=\"DATE:05/06/24_TIME:18:53:15\" -DMOD_NAME=\"SAMPLE_MODULE\"  -DARCH_X86   -DINTEL   -fPIC -c ./sample_module.cc
+/opt/boost_1_85_0:/usr/local/include:/opt/boost_1_85_0:/usr/local/include:/opt/boost_1_85_0:/usr/local/include:/opt/boost_1_85_0:/usr/local/include:
+sample_module.o
+g++ -shared -Wl,--export-dynamic sample_module.o    -o ../../../core/../bin/SAMPLE_MODULE.so
