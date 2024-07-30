@@ -1,0 +1,109 @@
+#*****************************************************************
+#*
+#* File: build.mk 
+#*
+#* Makefile for launching unit.mk with correct flags.
+#* Should be included from node's or module's makefile.
+#*
+#* External variables to be defined before:
+#*	 ROOT		- project root directory
+#*	 NAME		- current compiled Module or Node name
+#*	 TRG_TYPE 	- lib or node
+#*	 NODE_TYPE 	- CPU and/or DSP and/or ARM (e.g. "CPU ARM")
+#*	 NODE_NAME 	- calling node's name
+#*	 PROJ		- for nodes only: project name
+#*	 CHIP		- cfg: chip name
+#*	 BRD		- cfg: board name
+#*	 SRC		- C-sources file names
+#*   MYTCHPATH  - path to file containing tool chain definition
+#*
+#* Copyright(c) 2015 Qualcomm Technologies, Inc. All Rights Reserved.
+#* Confidential and Proprietary - Qualcomm Technologies, Inc.
+#*
+#*****************************************************************
+
+SHELL	:= /bin/bash
+OSTYPE	:= $(shell uname)
+
+CC = gcc
+CPP = g++
+
+#*********************************************************
+# Check Mandatory External variables definitions    
+#*****************************************************************
+ifndef ROOT
+$(error ROOT is not defined. Aborting)
+endif
+
+ifndef NAME
+$(error NAME is not defined. Aborting)
+endif
+
+
+BUILD_TIME=$(shell date "+DATE:%d/%m/%y_TIME:%H:%M:%S")
+
+#RULE file
+# location of the Python header files
+ 
+PYTHON_VERSION = 3.6
+PYTHON_INCLUDE = /usr/include/python$(PYTHON_VERSION)
+ 
+# location of the Boost Python include files and library
+ 
+BOOST_INC = /usr/include
+BOOST_LIB = /usr/lib
+
+#RULE file
+# location of the Python header files
+ 
+PYTHON_VERSION = 3.6
+PYTHON_INCLUDE = /usr/include/python$(PYTHON_VERSION)
+ 
+# location of the Boost Python include files and library
+ 
+BOOST_INC = /usr/include
+BOOST_LIB = /usr/lib
+
+
+
+debug: CFLAGS =-g -O0 -DDEBUG
+debug: lib
+
+release: CFLAGS=-O3 -g -DNDEBUG
+release: lib
+
+release_strip: CFLAGS=-O3 -DNDEBUG
+release_strip: lib
+
+SRC_H += $(wildcard $(ROOT)/API/*.h)
+#objects = $(patsubst %.cpp,%.o,$(src_cpp)) 
+#objects = $(src_cpp:.cpp= .o)
+#objects += $(patsubst %.c,%.o,$(src_c))
+#objects = SAMPLE_MODULE.o
+# All Target
+BIN := $(ROOT)/bin
+
+OBJECTS = $(SRC_CPP:.cpp=.o)
+OBJECTS += $(patsubst %.c,%.o,$(SRC_C))
+SYS_API = $(ROOT)/API
+all: lib
+
+
+#lib: $(BIN)/$(NAME).so
+
+lib : $(OBJECTS)
+	@echo $(OBJECTS)
+	@test -d $(BIN) || mkdir -p $(BIN) 
+	$(CPP) -shared -Wl,--export-dynamic $(OBJECTS) -L$(BOOST_LIB) -lboost_python-$(PYTHON_VERSION) -o $(BIN)/$(NAME).so
+ 
+$(OBJECTS): $(SRC_CPP) $(SRC_H)
+	@echo $(SRC_CPP) $(SRC_H)
+	@echo $(OBJECTS)
+	$(CPP) -I$(PYTHON_INCLUDE) -I$(SYS_API) -I$(BOOST_INC) $(CFLAGS) -fPIC -c $(SRC_CPP)
+	#$(CC) -I$(PYTHON_INCLUDE) -I$(SYS_API) -I$(BOOST_INC) -fPIC -c $(SRC_C)
+
+
+.PHONY: clean
+clean:
+	rm *o 
+	rm $(BIN)/$(NAME).so

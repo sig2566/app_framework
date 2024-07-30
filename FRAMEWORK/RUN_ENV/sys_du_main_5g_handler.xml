@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+<components_list>
+ <!--
+  <component>
+    <name>SAMPLE_MODULE</name>
+	<config>tst</config>
+    <info>Sample Module</info>
+  </component>
+  <component>
+    <name>TEST_MODULE</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+  -->
+  <component>
+    <name>MAIN_5G_HANDLER</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+    <component>
+    <name>HANDLER_TEST_MOD</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+  
+<component>
+    <name>CODE_BLOCK_MAIN</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+<component>
+    <name>CODE_BLOCK_RX_MAIN</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+<component>
+    <name>CRC_ALL_TB_MAIN</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+<component>
+    <name>LIB_CRC_GEN</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+<component>
+    <name>SCRAMBLER_LIB</name>
+    <config>tst</config>
+    <info>"Scrambler Library"</info>
+</component>
+ <component>
+    <name>DE_SCRAMBLER</name>
+    <config>tst</config>
+    <info>"Descrambler Library"</info>
+</component>
+<component>
+    <name>DE_SCRAMBLER_AVX</name>
+    <config>tst</config>
+    <info>"AVX Descrambler Library"</info>
+</component>
+<component>
+    <name>DE_INTERLEAVER_LIB</name>
+    <config>tst</config>
+    <info>"Deinterleaver Library"</info>
+</component>
+<component>
+    <name>DE_INTERLEAVER_AVX</name>
+    <config>tst</config>
+    <info>"AVX Deinterleaver Library"</info>
+</component>
+ <component>
+    <name>SLOT_BUILDER</name>
+    <config>tst</config>
+    <info>"Slot builder Library"</info>
+</component>
+<component>
+    <name>QAM_MODULATOR</name>
+    <config>tst</config>
+    <info>"Qam modulator Library"</info>
+</component>
+<component>
+    <name>QAM_DEMODULATOR</name>
+    <config>tst</config>
+    <info>"Qam demodulator Library"</info>
+</component>
+<component>
+    <name>DMRS</name>
+    <config>tst</config>
+    <info>"DMRS Library"</info>
+</component>
+<component>
+    <name>INVERSE_FFT</name> 
+    <config>tst</config>
+    <info>"INVERSE_FFT Library"</info>
+</component>
+<component>
+    <name>LDPC_ENC</name>
+    <config>tst</config>
+    <info>"LDPC encoder Library"</info>
+</component>
+<component>
+    <name>LDPC_DEC</name>
+    <config>tst</config>
+    <info>"LDPC decoder Library"</info>
+</component>
+<component>
+    <name>CB_CRC_DETECT</name>
+    <config>tst</config>
+    <info>"CBCRC DETECTOR Library"</info>
+</component>
+<component>
+    <name>TB_CRC_DETECT</name>
+    <config>tst</config>
+    <info>"TBCRC DETECTOR Library"</info>
+</component>
+<component>
+    <name>PUSCH_ESTIMATION</name>
+    <config>tst</config>
+    <info>"PUSCH_ESTIMATION Library"</info>
+</component>
+<component>
+    <name>ESTIMATION_TEST</name>
+    <config>tst</config>
+    <info>"DMRS_ESTIMATION_TEST Library"</info>
+</component>
+<component>
+    <name>PUSCH_EQUALIZER</name>
+    <config>tst</config>
+    <info>"PUSCH_EQUALIZER Library"</info>
+</component>
+<component>
+    <name>EST_MIMO</name>
+    <config>tst</config>
+    <info>"EST_MIMO Library"</info>
+</component>
+<component>
+    <name>MIMO_RECEIVER</name>
+    <config>tst</config>
+    <info>"MIMO_RECEIVER Library"</info>
+</component>
+<component>
+    <name>EQUALIZER_TEST</name>
+    <config>tst</config>
+    <info>"EQUALIZER_TEST Library"</info>
+</component> 
+<component>
+    <name>CONST_DATA</name>
+    <config>tst</config>
+    <info>"Common constant data tables Library"</info>
+</component> 
+<component>
+    <name>NEON_MATH_LIB</name>
+    <config>tst</config>
+    <info>"Neon Math library"</info>
+</component> 
+<component>
+    <name>SPLITTER_ENGINE</name>
+    <config>tst</config>
+    <info>"SPLITTER ENGINE Module"</info>
+</component> 
+  <component>
+    <name>FAPI_GEN_TEST</name>
+	<config>tst</config>
+    <info>"Test Module"</info>
+  </component>
+
+  <component>
+    <name>FAPI_XML_PARSER</name>
+    <config>tst</config>
+    <info>"Scrambler Module"</info>
+  </component>
+  
+ <component>
+    <name>DU_ORAN_HANDLER</name>
+    <config>tst</config>
+    <info>"DU ORAN Handler Module"</info>
+  </component>
+  
+  <component>
+    <name>ORAN</name>
+    <config>tst</config>
+    <info>"ORAN Module"</info>
+  </component>
+  
+  <component>
+    <name>SYMBOL_HANDLER</name>
+    <config>DU</config>
+    <info>"Symbol Handler Module"</info>
+  </component>
+ <component>
+    <name>HANDLER_TEST_ORAN_MOD</name>
+    <config>tst</config>
+    <info>"ORAN Test Module"</info>
+  </component>
+
+</components_list>
+
