@@ -1,7 +1,7 @@
  
 # compile mesh classes
 NAME = CONST_DATA
-ROOT = ../../../COMMON
+ROOT = ../../../FRAMEWORK
 
 include $(ROOT)/Make/build.mk
 

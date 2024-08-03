@@ -17,9 +17,9 @@ ifndef NAME
 $(error NAME is not defined. Aborting)
 endif
 
-ifndef architecture
-$(error Architecture is not defined. Format: make target architecture=ARM/INTEL. Aborting)
-endif
+#ifndef architecture
+#$(error Architecture is not defined. Format: make target architecture=ARM/INTEL. Aborting)
+#endif
 #*****************************************************************
 
 
@@ -29,96 +29,16 @@ endif
 SRC_H   := $(SRC_H) $(shell find $(ROOT)/Sys_API -type f -name "*.h")
 SRC_INC := $(SRC_INC) $(shell find $(ROOT)/Sys_API -type f -name "*.inc")
 
-#By default DU is compiled with ICC and COMMON and RU with GCC
-DU_MARK := $(shell pwd | grep /DU/)
-RU_MARK := $(shell pwd | grep /RU/)
-ifeq ($(DU_MARK),)
-#ifeq ($(COMP),)
-COMP ?= GCC
-#endif
-ifneq ($(RU_MARK),)
-#RU component
-SRC_H   := $(SRC_H) $(shell find $(ROOT)/../RU/Sys_API -type f -name "*.h")
-SRC_INC   := $(SRC_INC) $(shell find $(ROOT)/../RU/Sys_API -type f -name "*.inc")
-endif
-else
-#DU component
-#ifeq ($(COMP),)
-COMP ?= ICC
-#endif
-SRC_H   := $(shell find $(ROOT)/../DU/Sys_API -type f -name "*.h") $(SRC_H)
-SRC_INC   := $(shell find $(ROOT)/../DU/Sys_API -type f -name "*.inc") $(SRC_INC)
-endif
 
-ifeq (ARM, $(architecture))
-
-ifeq ($(PLATFORM_NAME), ru_nxp)
-
-export ARM_SYSROOT=$(SW_PACKAGER_SYS_ROOT_PATH)
-
-export PYTHON_VERSION = 37
-export BOOST_INC=$(ARM_SYSROOT)/usr/include/
-export BOOST_LIB=$(ARM_SYSROOT)/usr/lib
-export SYSROOT_LIB=$(ARM_SYSROOT)/lib
-#export CPATH=$(PATH)
-CC=$(CROSS_COMPILE)gcc 
-CPP=$(CROSS_COMPILE)g++ 
-LIB_SO += --sysroot=$(ARM_SYSROOT)
-ROOT_ARM:=$(OUT_TARGET_DIR)
-
-CFLAGS_ADD+=-I$(INFRA_LIB_ROOT)/interfaces \
-	 	-I$(ARM_SYSROOT)/usr/include/ \
-	 	-I$(ARM_SYSROOT)/usr/include/python3.7m/
-# boost library from Micha: -I/p/Development/Builds/5G/Infra/1_3_3_0/opt/boost/arch/nxp/include/
-BIN := $(ROOT_ARM)/lib
-
-else   ################################################################# ! ARM ru_nxp
-#@echo "********* Standalone Compile  **********"
-
-ROOT_ARM = /mnt/share/PHY5G/Prototype/NR_5G_SIM
-
-export CPATH=/opt/gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu/aarch64-linux-gnu/include/c++/5.5.0/bits:/opt/gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu/aarch64-linux-gnu/include/c++/5.5.0:/opt/intel/compilers_and_libraries_2018.1.163/linux/ipp/include:/opt/gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu/aarch64-linux-gnu/libc/usr/include:/usr/arm/lib
-INC_FLAGS=-I/opt/gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu/aarch64-linux-gnu/libc/usr/include -I/usr/local/include
-
-CC  = /opt/gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc
-CPP = /opt/gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-g++
-BIN := $(ROOT_ARM)/bin
-endif
-
-
-#ARCH_DEF   = -DARCH=ARM
-ARCH_DEF   = -DARCH_ARM
-#CFLAGS_ADD = -std=c++11 --disable-multilib
-CFLAGS_ADD := $(CFLAGS_ADD) -std=c++11
-#CFLAGS_ADD = 
-
-else ###########################################################   INTEL Architecture
-#CFLAGS_CPP := -std=c++11
-#Select gcc or icc compilers
-ifeq (ICC, $(COMP))
-
-CC := icc
-CPP := icc
-AR :=ar
-else # GCC or G++ compilers
-
-ifeq (GCC, $(COMP))
 CC  := gcc
 CPP := g++
-else
-$(error Wrong compiler is selected. Options are GCC or ICC)
-endif
-
-endif #end of ifeq (ICC)
  
 #ARCH_DEF = -DARCH=X86
 ARCH_DEF = -DARCH_X86
-INC_FLAGS = -msse4.1
-CFLAGS_ADD := $(CFLAGS_ADD)  -DINTEL
-CFLAGS_ADD := $(CFLAGS_ADD) -std=c++11
+#INC_FLAGS = -msse4.1
+
 BIN := $(ROOT)/../bin
 
-endif # end of IF-ELSE (ARM/INTEL Architecture)
 
 
 BUILD_TIME=$(shell date "+DATE:%d/%m/%y_TIME:%H:%M:%S")
@@ -138,13 +58,7 @@ endif
 ifeq (release_strip, $(mode))
 DEBFLAGS:=-O3 
 endif
-# Set antena mode: options:_1x1_ _2x2_ _4x4_ _8x32_ 
-ant_mode:= _8x32_
-CFLAGS_ADD := $(CFLAGS_ADD)  -D$(ant_mode)
 
-#Set RU offline or RT modes
-rt_mode:= _RU_OFFLINE_
-#other option is _RU_OFFLINE_
 CFLAGS_ADD := $(CFLAGS_ADD)  -D$(rt_mode)
 
 

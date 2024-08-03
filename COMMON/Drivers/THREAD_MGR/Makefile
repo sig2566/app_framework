@@ -1,7 +1,7 @@
  
 # compile mesh classes
 NAME = THREAD_MGR
-ROOT = ../../../COMMON
+ROOT = ../../../FRAMEWORK
 
 BUILD_MODULE = false
 #Add support for DPDK library
