@@ -25,7 +25,7 @@
 
 using namespace ns_5g_phy;
 
-
+extern int16_t INV_FULL_LUT[];
 
 /******************************************************************************************//*!
  *@class CModuleControl

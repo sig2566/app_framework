@@ -2,7 +2,6 @@
 
 #ifndef HANDLER_FAPI_P_H
 #define HANDLER_FAPI_P_H
-#include"gnb_l1_l2_api.h"
 #include <iostream>
 #include <vector>
 #ifdef __cplusplus

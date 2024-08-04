@@ -51,6 +51,7 @@ namespace ns_5g_phy
             }
         virtual EResultT ICall(SysTimeT *sys_time_p, uint32_t param)
             {
+        		return E_OK;
             }
         virtual EResultT IConfigure(uint32_t id, void *in, void **out)
             {

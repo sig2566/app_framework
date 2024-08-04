@@ -23,7 +23,7 @@
 #include <sstream>
 #include <errno.h>
 
-#include "i_sys_types.h"
+#include <cstdint>
 #include "common_typedef.h"
 #include "i_sys_utils.h"
 

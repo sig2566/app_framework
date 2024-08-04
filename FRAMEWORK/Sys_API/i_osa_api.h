@@ -25,7 +25,7 @@
 
 
 #endif
-#include "i_sys_types.h"
+#include <cstdint>
 #include "i_sys_utils.h"
 #include "i_as_phy_common.h"
 /*
@@ -122,7 +122,7 @@ typedef unsigned long OSA_stat_t;
 
 void OSA_threads_print();
 
-static void *OSA_thread_attr_init(OSA_thread_attr_t *attr_p)
+static void OSA_pthread_attr_init(OSA_thread_attr_t *attr_p)
 {
 #ifdef POSIX_API
     pthread_attr_init(attr_p);

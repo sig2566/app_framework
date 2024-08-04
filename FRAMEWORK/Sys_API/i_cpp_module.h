@@ -318,7 +318,7 @@ namespace ns_5g_phy
 #if defined(__x86_64__) || defined(__amd64__)
 inline	uint64_t tsc(void)
 	{
-	    register uint32_t lo, hi;
+	    uint32_t lo, hi;
 	    asm volatile ("rdtsc" : "=a" (lo), "=d" (hi));
 	    return ((uint64_t)hi << 32UL) | (uint32_t)lo;
 	}
