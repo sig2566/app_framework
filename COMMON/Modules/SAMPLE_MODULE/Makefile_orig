@@ -1,0 +1,51 @@
+ 
+# compile mesh classes
+NAME = SAMPLE_MODULE
+ROOT = ../..
+
+
+src_c   = $(wildcard *.c)
+src_cpp = $(wildcard *.cpp)
+
+#RULE file
+# location of the Python header files
+ 
+PYTHON_VERSION = 3.6
+PYTHON_INCLUDE = /usr/include/python$(PYTHON_VERSION)
+ 
+# location of the Boost Python include files and library
+ 
+BOOST_INC = /usr/include
+BOOST_LIB = /usr/lib
+
+#objects = $(patsubst %.cpp,%.o,$(src_cpp)) 
+objects = $(src_cpp:.cpp= .o)
+objects += $(patsubst %.c,%.o,$(src_c))
+#objects = SAMPLE_MODULE.o
+# All Target
+BIN := $(ROOT)/bin
+
+objects = $(src_cpp:.cpp= .o)
+objects += $(patsubst %.c,%.o,$(src_c))
+SYS_API = $(ROOT)/API
+all: lib
+
+$(objects): $(src_cpp) $(src_c)
+	@echo $(src_cpp) $(src_c)
+	@echo $(objects)
+	g++ -I$(PYTHON_INCLUDE) -I$(SYS_API) -I$(BOOST_INC) -fPIC -c $(src_cpp)
+	#gcc -I$(PYTHON_INCLUDE) -I$(SYS_API) -I$(BOOST_INC) -fPIC -c $(src_c)
+
+lib: $(NAME).so
+
+$(NAME).so : $(objects)
+	@echo $(objects)
+	@test -d $(BIN) || mkdir -p $(BIN) 
+	g++ -shared -Wl,--export-dynamic SAMPLE_MODULE.o -L$(BOOST_LIB) -lboost_python-$(PYTHON_VERSION) -o $(BIN)/$(NAME).so
+ 
+
+
+.PHONY: clean
+clean:
+	rm *o 
+	rm $(BIN)/$(NAME).so

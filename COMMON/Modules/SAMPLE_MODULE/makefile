@@ -1,7 +1,6 @@
  
 # compile mesh classes
-NAME = TEST_MODULE
+NAME = SAMPLE_MODULE
 ROOT = ../../../FRAMEWORK
 
 include $(ROOT)/Make/build.mk
-
