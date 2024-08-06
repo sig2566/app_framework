@@ -17,7 +17,6 @@
 #include "csim_control.h"
 #include <boost/python.hpp>
 #include <boost/thread.hpp>
-#include "i_handler_api.h"
 #include "rt_debug_api.h"
 #ifdef RU_PHY
 #include "ru_version.h"
@@ -25,7 +24,7 @@
 #include "du_version.h"
 #endif
 //#include <boost/date_time.hpp>
-
+const int NUM_OBJECTS= 1;
 
 using namespace boost::python;
 using namespace ns_5g_phy;
@@ -215,7 +214,6 @@ class Cpy5Gstub {
 	std::string		debug_data_file_name_;
 	std::string		default_file_name_;
 	boost::thread   out_thread_;
-	Handler_API     *handler_module_p_;
 
 
 	void OutThread(uint32_t num);
@@ -223,8 +221,6 @@ class Cpy5Gstub {
 public:
 	//***********************************************************
 	uint32_t AS_PHY_Connect();
-	uint32_t  GL_FAPI_cfg(CONFIGREQUESTStruct *pInitParam);
-	uint32_t FAPI_parser(char* msg);
 	//***********************************************************
 	std::string Init(std::string &path);
 	list GetMemAreasNames();

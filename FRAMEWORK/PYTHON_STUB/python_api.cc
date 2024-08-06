@@ -9,7 +9,7 @@
 
 #include "cpy5gstub.h"
 
-extern Cpy5Gstub sim5g[MAX_NUM_OF_5G_CELLS];
+extern Cpy5Gstub sim5g[];
 static uint32_t curr_cell = 0;
 
 //Python wrapper function
@@ -121,7 +121,7 @@ std::string SetLogPriority(uint32_t severity)
 std::string SelectCell(uint32_t cell_ind)
 {
     std::string res;
-    if(cell_ind < MAX_NUM_OF_5G_CELLS)
+    if(cell_ind < NUM_OBJECTS)
     {
         curr_cell = cell_ind;
         res= "Ok";
@@ -129,7 +129,7 @@ std::string SelectCell(uint32_t cell_ind)
     else
     {
         char buf[100];
-        sprintf(buf, "Failed. Max value should be less then %d", MAX_NUM_OF_5G_CELLS-1);
+        sprintf(buf, "Failed. Max value should be less then %d", NUM_OBJECTS-1);
         res = buf;
     }
     return res;

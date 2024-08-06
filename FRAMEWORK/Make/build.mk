@@ -34,7 +34,7 @@ HEADERS := $(SRC_H) $(SRC_H_MODULE)
 INCLUDE_DIRS := $(sort $(dir $(HEADERS)))
 
 # Convert the list of directories into -I include parameters for GCC
-INCLUDE_FLAGS := $(foreach dir, $(INCLUDE_DIRS), -I$(dir))
+INCLUDE_FLAGS := $(foreach dir, $(INCLUDE_DIRS), -I$(dir)) $(OPT_H)
 
 CC  := gcc
 CPP := g++
@@ -102,7 +102,7 @@ lib : $(OBJECTS_CPP) $(OBJECTS_C)
 	$(LINK_TOOL) $(OBJECTS_CPP) $(OBJECTS_C) $(LIB_SO)  $(BUILD_TARGET)
  
 $(OBJECTS_CPP): $(SRC_CPP) $(SRC_H) $(SRC_INC)
-	@echo $(SRC_CPP) $(INCLUDE_FLAGS)
+	@echo $(SRC_CPP) $(INCLUDE_FLAGS) 
 	@echo $(OBJECTS_CPP)
 	@test -d $(OBJ) || mkdir -p $(OBJ) 
 	$(CPP) $(INCLUDE_FLAGS) $(VERDEF) $(ARCH_DEF) $(CFLAGS)  -fPIC -c $(SRC_CPP)

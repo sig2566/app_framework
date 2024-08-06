@@ -30,7 +30,5 @@
 #include "i_cpp_sys_api.h"
 #include "i_cpp_module.h"
 #include "i_use_framework.h"
-#include "global_defines.inc"
-
 
 #endif /* API_I_API_COMMON_H_ */

@@ -21,7 +21,6 @@ void Cpy5Gstub::ResetData()
 	modules_p_ = NULL;
 	out_2_terminal_ = FALSE;
 	out_2_file_ = FALSE;
-	handler_module_p_ = NULL;
 
 }
 
@@ -81,20 +80,8 @@ void Cpy5Gstub::OutThread(uint32_t num)
 
 }
 
-//Send FAPI processing to AS_PHY
-uint32_t  Cpy5Gstub::GL_FAPI_cfg(CONFIGREQUESTStruct *pInitParam)
-{
-    WaveFormStructIO config_data;
-    handler_module_p_->GLConfig(&config_data, pInitParam);
-    return 0;
-}
-uint32_t Cpy5Gstub::FAPI_parser(char* msg)
-{
-    handler_module_p_->FAPIParser(msg);
-    return 0;
-}
-
 //It should be called after Init
+#define HANDLER_MODDULE   "MAIN_5G_HANDLER"
 uint32_t Cpy5Gstub::AS_PHY_Connect()
 {
     char mod_name2[] = HANDLER_MODDULE;
@@ -109,8 +96,6 @@ uint32_t Cpy5Gstub::AS_PHY_Connect()
             modules_p_[i].module_p_->IConfigure(e_GET_API, NULL, &tmp_api);
         }
     }
-    ASSERT(tmp_api);
-    handler_module_p_ = (Handler_API*)tmp_api;
 
     return 0;
 }
@@ -372,7 +357,8 @@ std::string Cpy5Gstub::SetSeverity(uint32_t prio)
     }
 }
 
-Cpy5Gstub sim5g[MAX_NUM_OF_5G_CELLS];
+
+Cpy5Gstub sim5g[NUM_OBJECTS];
 //API function to connect with ITarget API
 //extern "C" uint32_t IGetConnectAPI(void **target_ptr)
 //{
