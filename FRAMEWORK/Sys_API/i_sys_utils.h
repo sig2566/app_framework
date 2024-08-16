@@ -29,9 +29,9 @@ extern "C" {
 #define UNIX
 
 #if		(ARCH == INTEL)
-#define CACHE_ALIGNMENT				(64ULL) // in bytes
+#define SYS_CACHE_ALIGNMENT				(64ULL) // in bytes
 #elif 	(ARCH == ARM)
-#define CACHE_ALIGNMENT				(64ULL) // in bytes
+#define SYS_CACHE_ALIGNMENT				(64ULL) // in bytes
 #else
 #error	No valid architecture detected !!!
 #endif

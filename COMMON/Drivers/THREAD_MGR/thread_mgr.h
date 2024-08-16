@@ -37,8 +37,8 @@ class ThreadFactory : public CBaseModule
 {
     /***********************************************************************************/
     //Thread profiler
-	/*__align(CACHE_ALIGNMENT)*/ DpdkEventDevThread dpdk_thread_driver_[MAX_THREADS];
-	/*__align(CACHE_ALIGNMENT)*/ CProfileCnt thread_prof_;  //Example of profiler counter
+	/*__align(SYS_CACHE_ALIGNMENT)*/ DpdkEventDevThread dpdk_thread_driver_[MAX_THREADS];
+	/*__align(SYS_CACHE_ALIGNMENT)*/ CProfileCnt thread_prof_;  //Example of profiler counter
 
     uint32_t num_thread_drivers_;
     uint64_t alloc_thread_mask_;

@@ -243,7 +243,7 @@ EResultT CRSE_Control::IWarmStart()
 EResultT CRSE_Control::IHotStart()
 {
 	uint32_t i;
-	__align(CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
+	__align(SYS_CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
 
 	//It is necessary to sync rge system and Linux clocks after every hot start.
 	timer_ev_params.is_time_sync_ready_= false;
@@ -514,7 +514,7 @@ EResultT CRSE_Control::ISyncTime(SysTimeT *sys_time_p, timespec *linux_time)
 	//Update System time
 	struct timespec cur_time;
 	clock_gettime(CLOCK_MONOTONIC, &cur_time);
-  __align(CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
+  __align(SYS_CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
 	memcpy((char*)&timer_ev_params, (char*)&timer_ev_params_, sizeof(timer_ev_params));
 	int64_t nsec_diff = DiffBetweenTimespec(cur_time, timer_ev_params.last_linux_time_);
 	int64_t usec_diff = nsec_diff/1000;

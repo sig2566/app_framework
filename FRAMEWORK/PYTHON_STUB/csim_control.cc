@@ -177,7 +177,7 @@ std::vector<std::string> &CSimControl::GetLastLogs()
 {
 	char log_str[1000];
 	timespec linux_time;
-	while(RTDBG_GetLog(log_str, &linux_time)== true)
+	while(RTDBG_GetLog(log_str, &linux_time, -1)== true)
 	{
 		last_logs_.push_back(log_str);
 	}

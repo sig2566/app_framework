@@ -227,7 +227,7 @@ list Cpy5Gstub::GetProfileCnt()
 	{
 		uint32_t j,  num;
 		char buf[1000];
-		num = RTDBG_GetProfCntrs(i);
+		num = RTDBG_AllocProfCntrNum(i);
 		if(num ==-1)
 		{
 			return res;

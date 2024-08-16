@@ -347,9 +347,9 @@ namespace ns_5g_phy
 	  void *ptr_consumer_;
 	  uint32_t number_chunks_;
 	  uint32_t single_chunk_size_;
-	  volatile __align(CACHE_ALIGNMENT) uint32_t wr_ind_; // make write pointer be aligned to the cache-line size of the processor
-	  volatile __align(CACHE_ALIGNMENT) uint32_t rd_ind_; // make read pointer be aligned to the cache-line size of the processor
-	  __align(CACHE_ALIGNMENT) EAccessT access_;
+	  volatile __align(SYS_CACHE_ALIGNMENT) uint32_t wr_ind_; // make write pointer be aligned to the cache-line size of the processor
+	  volatile __align(SYS_CACHE_ALIGNMENT) uint32_t rd_ind_; // make read pointer be aligned to the cache-line size of the processor
+	  __align(SYS_CACHE_ALIGNMENT) EAccessT access_;
 	  uint32_t attrib_;
 	  OSA_spinlock_t in_lock_;
 	  OSA_spinlock_t out_lock_;
@@ -364,7 +364,7 @@ namespace ns_5g_phy
 		  rd_ind_ = 0;
 		  wr_ind_ = 1;
 		  number_chunks_= size;
-		  single_chunk_size_= ALIGN_SIZE(inc_size, CACHE_ALIGNMENT);
+		  single_chunk_size_= ALIGN_SIZE(inc_size, SYS_CACHE_ALIGNMENT);
 		  access_ = access;
 		  attrib_ = attrtib;
 		  strcpy(name_, name);
@@ -375,7 +375,7 @@ namespace ns_5g_phy
 	  {
 		  uint64_t pointer_int;
 		  uint32_t total_size= single_chunk_size_*number_chunks_;
-		  total_size = ADD_SIZE_FOR_MEM_ALIGN(total_size, CACHE_ALIGNMENT);
+		  total_size = ADD_SIZE_FOR_MEM_ALIGN(total_size, SYS_CACHE_ALIGNMENT);
 		  ASSERT(total_size >0);
 
 		  if(mem_buf== NULL)
@@ -384,7 +384,7 @@ namespace ns_5g_phy
 			  {
 				  allocated_ptr_= new char [total_size];
 				  ASSERT(allocated_ptr_!=NULL);
-				  pointer_int = ALIGN_POINTER((uint64_t)allocated_ptr_, CACHE_ALIGNMENT); // align the memory pointer to the Cache line size
+				  pointer_int = ALIGN_POINTER((uint64_t)allocated_ptr_, SYS_CACHE_ALIGNMENT); // align the memory pointer to the Cache line size
 				  ptr_producer_ = ptr_consumer_= (void*)pointer_int;
 			  }
 		  }
@@ -608,7 +608,7 @@ namespace ns_5g_phy
 	***********************************************************************************************///
 	template<class T, int32_t CHUNKS_NUM>class StaticMemArea : public CMemArea
 	{
-		__align(CACHE_ALIGNMENT) T buf_[CHUNKS_NUM];
+		__align(SYS_CACHE_ALIGNMENT) T buf_[CHUNKS_NUM];
 	public:
 		  void *GetReadBufP()
 		  {

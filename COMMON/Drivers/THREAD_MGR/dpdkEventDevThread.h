@@ -143,9 +143,9 @@ class DpdkEventDevThread: public WorkerThread_api
     }
 
     //thread return value
-    /*__align(CACHE_ALIGNMENT)*/ int thread_retval_ = 0;
+    /*__align(SYS_CACHE_ALIGNMENT)*/ int thread_retval_ = 0;
 
-    __align(CACHE_ALIGNMENT) IModuleControlCallBackAPI *callback_ptr_;
+    __align(SYS_CACHE_ALIGNMENT) IModuleControlCallBackAPI *callback_ptr_;
     ThreadFactory *daddy_p_;
 	uint32_t core_num_;
 	CMemArea *permanent_q_, *(temporary_q_[NUM_TASK_PRIO]);
@@ -153,10 +153,10 @@ class DpdkEventDevThread: public WorkerThread_api
     CProfileCnt thread_prof_;
     uint32_t	thread_trace_id_= -1;
     //"thread should be stopped" flag
-    volatile /*__align(CACHE_ALIGNMENT)*/ bool stop_flag_ = true;
+    volatile /*__align(SYS_CACHE_ALIGNMENT)*/ bool stop_flag_ = true;
 
     //"thread is running" flag
-    volatile /*__align(CACHE_ALIGNMENT)*/ bool run_flag_ = false;
+    volatile /*__align(SYS_CACHE_ALIGNMENT)*/ bool run_flag_ = false;
 
 
 

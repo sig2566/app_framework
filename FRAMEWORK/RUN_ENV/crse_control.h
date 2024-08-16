@@ -97,7 +97,7 @@ class CRSE_Control : public IGL_ControlAPI, public IGL_DebugAPI
 	double					timer_ratio_= 0; //Ratio between clock number and time
 	uint32_t				timer_correct_ = 0; //Additional time, added due to timer preparation calculation.
 
-	__align(CACHE_ALIGNMENT) volatile TimeEvParams timer_ev_params_;
+	__align(SYS_CACHE_ALIGNMENT) volatile TimeEvParams timer_ev_params_;
 	CSchedulerData			perm_timer_event_scheduler_[ TIME_EVENT_TAB_ENTRIES_NUM ][ MAX_TIMER_EVENTS ];
 	volatile uint32_t				perm_sched_attached_cnts_[TIME_EVENT_TAB_ENTRIES_NUM];
 	// table for the temporal timers event (every 10usec)
@@ -185,7 +185,7 @@ public:
 		uint32_t i,j;
 		num_modules_= 0;
 		Target_p_ = NULL;
-		__align(CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
+		__align(SYS_CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
 		control_callback_ = NULL;
 
 		prof_cnt_num_=0;
