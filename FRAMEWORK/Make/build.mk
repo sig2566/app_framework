@@ -29,13 +29,17 @@ endif
 SRC_H   := $(SRC_H) $(shell find $(ROOT)/Sys_API -type f \( -name '*.h' -o -name '*.inc' -o -name '*.hpp' \))
 SRC_H_MODULE   := $(shell find . -type f \( -name '*.h' -o -name '*.inc' -o -name '*.hpp' \))
 
+PROFILE_CPP_API :=$(ROOT)/../../rt_debug_lib/rt_debug/rt_debug_cpp/api
+PROFILE_DEF_API := $(ROOT)/../../rt_debug_lib/rt_debug/api
+
 HEADERS := $(SRC_H) $(SRC_H_MODULE)
 # Generate a list of unique directories containing header files
 INCLUDE_DIRS := $(sort $(dir $(HEADERS)))
 
 # Convert the list of directories into -I include parameters for GCC
 INCLUDE_FLAGS := $(foreach dir, $(INCLUDE_DIRS), -I$(dir)) $(OPT_H)
-
+#Add path to profiler header files
+INCLUDE_FLAGS := $(INCLUDE_FLAGS) -I$(PROFILE_CPP_API) -I$(PROFILE_DEF_API)
 CC  := gcc
 CPP := g++
  

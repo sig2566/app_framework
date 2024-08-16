@@ -17,6 +17,6 @@ BOOST_LIB = /ust/lib
 LIB_SO :=-L$(BIN) -lrtdebug.a
  
 
-OPT_H = -I$(BOOST_INC) 
+OPT_H = -I$(BOOST_INC)
 include $(ROOT)/Make/build.mk
 
