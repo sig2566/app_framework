@@ -212,23 +212,6 @@ struct Complex64
     int64_t im;
 };
 
-struct GenSysTime
-{
-	uint16_t nf;
-	uint16_t nsf;
-	int32_t offset;
-};
-
-struct ProfileData
-{
-	uint64_t max_cnt_;
-	uint64_t max_cnt_time_;
-	uint64_t last_cnt_;
-	uint64_t average_cnt_;
-	uint64_t meas_num_;
-	uint64_t fill_cache_line_align[3];
-};
-
 
 #ifdef __cplusplus
 }
