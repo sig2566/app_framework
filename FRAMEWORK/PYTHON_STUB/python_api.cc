@@ -252,7 +252,7 @@ int32_t ReadEvCnt(std::string grp_name, std::string cnt_name)
 list EvCntList()
 {
 	list res;
-	char grp_name[100], out[200];
+	char grp_name[100], out[300];
 	std::vector<std::string> event_cnt;
 		typename std::vector<std::string>::iterator iter;
 	int32_t i, j, n_evt, n_grp = RTDBG_GetGrpNum();

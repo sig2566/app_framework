@@ -9,14 +9,16 @@
 
 #ifndef CPY5GSTUB_H_
 #define CPY5GSTUB_H_
-#include "i_api_common.h"
+
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <python.hpp>
+#include <thread.hpp>
+#include "i_api_common.h"
 #include "csim_control.h"
-#include <boost/python.hpp>
-#include <boost/thread.hpp>
+
 #include "rt_debug_api.h"
 #ifdef RU_PHY
 #include "ru_version.h"
