@@ -159,7 +159,7 @@ std::vector<std::string> &CSimControl::GetProfilerCntrs()
 		if(cnt_val.meas_num_ > 0)
 		{
 		    cnt_val.average_cnt_ = cnt_val.average_cnt_ / cnt_val.meas_num_;
-		    sprintf(buf,"%s | %llu | %llu | %llu | %u | %f", cnt_tab_p[i]->GetName(),  cnt_val.average_cnt_, cnt_val.max_cnt_, cnt_val.last_cnt_, cnt_val.meas_num_, cnt_val.max_cnt_time_*1e-9);
+		    sprintf(buf,"%s | %lu | %lu | %lu | %lu | %f", cnt_tab_p[i]->GetName(),  cnt_val.average_cnt_, cnt_val.max_cnt_, cnt_val.last_cnt_, cnt_val.meas_num_, cnt_val.max_cnt_time_*1e-9);
             prof_info_.push_back(buf);
 #ifdef PROFILING_TEST
             fprintf(f_out,"%llu, %llu, %llu, %u, %f\n",cnt_val.average_cnt_, cnt_val.max_cnt_, cnt_val.last_cnt_, cnt_val.meas_num_, cnt_val.max_cnt_time_*1e-9);

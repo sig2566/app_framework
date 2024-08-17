@@ -241,7 +241,7 @@ list Cpy5Gstub::GetProfileCnt()
 			{
 				continue;
 			}
-			sprintf(buf, "%s, %s, avg=, %lld, max=, %lld, last=, %lld, max time=, %lld, measurements=, %lld\n",
+			sprintf(buf, "%s, %s, avg=, %ld, max=, %ld, last=, %ld, max time=, %ld, measurements=, %ld\n",
 						grp_name, prof_name, prof_tmp.average_cnt_, prof_tmp.max_cnt_, prof_tmp.last_cnt_, prof_tmp.max_cnt_time_, prof_tmp.meas_num_);
 			prof_cnt.push_back(buf);
 		}

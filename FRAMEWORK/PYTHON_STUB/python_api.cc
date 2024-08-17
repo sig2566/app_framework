@@ -269,7 +269,7 @@ list EvCntList()
 		for(j=0; j<n_evt; j++)
 		{
 			RT_counter *cnt_p = RTDBG_GetCounter(i, j);
-			sprintf(out,"%s.%s= %lld",grp_name, cnt_p->cnt_name, cnt_p->val);
+			sprintf(out,"%s.%s= %ld",grp_name, cnt_p->cnt_name, cnt_p->val);
 			event_cnt.push_back(out);
 		}
 	}
