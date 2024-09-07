@@ -7,7 +7,7 @@
  */
 
 #include "cmodule_control_callback.h"
-#include "crse_control.h"
+
 
 CModuleControlCallBack::CModuleControlCallBack() {
 	// TODO Auto-generated constructor stub
@@ -43,27 +43,15 @@ EResultT CModuleControlCallBack::IAllocateEventCnt(char *cnt_name, volatile int6
 	return E_OK;
 }
 
-EResultT CModuleControlCallBack::IRegistryProfileEntry(CProfileCnt *ptr, char *name, uint32_t *prof_id)
+EResultT CModuleControlCallBack::IRegistryProfileEntry(CProfileCnt *ptr, const char *name, uint32_t *prof_id)
 {
-    char buf[200];
-    ASSERT(ptr->GetNextProf() == NULL);
-    if(prof_cnt_q_head_==NULL)
-    {
-        prof_cnt_q_head_ = ptr;
-        prof_cnt_q_tail_ = ptr;
-    }
-    else
-    {
-        prof_cnt_q_tail_->ConnectProf(ptr);
-        prof_cnt_q_tail_ = ptr;
-    }
-    *prof_id = RTDBG_AddProfiler(rt_debug_grp_, name);
+
 	return E_OK;
 }
 
-EResultT CModuleControlCallBack::ISaveProfileInfo(uint32_t prof_id, ProfileData *data)
+EResultT CModuleControlCallBack::ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data)
 {
-	RTDBG_SaveProfMeas(rt_debug_grp_, prof_id, data);
+	RTDBG_ProfFlushMeas(rt_debug_grp_, prof_id, data);
 	return E_OK;
 }
 
@@ -87,27 +75,20 @@ CMemAreaP*  CModuleControlCallBack::GetProfileCntrs(uint32_t *cnt_num)
 	*cnt_num = prof_cnt_num_;
 	return prof_cnt_tab_;
 }
-EResultT CModuleControlCallBack::IRegisterTimerEvent(TimerEventSchedulerT *sched_info)
-{
-	main_class_ptr_->RegisterTimerEvent(sched_info);
-	return E_OK;
-}
+
 EResultT CModuleControlCallBack::ILogData(ESeverityT severity, char *str)
 {
-	SysTimeT sys_time;
+
 	if(severity <= cur_severity_)
 	{
-		sys_time = main_class_ptr_->GetSysTime();
-		RTDBG_AddLog(rt_debug_grp_, &sys_time, str);
+		RTDBG_AddLog(rt_debug_grp_, str);
 	}
 	return E_OK;
 }
 
 EResultT CModuleControlCallBack::ITraceData(uint32_t id, uint32_t line_num, uint64_t val0, uint64_t val1, uint64_t val2, uint64_t val3)
 {
-	SysTimeT sys_time;
-	IGetSysTime(&sys_time);
-	RTDBG_AddTrace(rt_debug_grp_, id, line_num, &sys_time, val0 , val1, val2, val3);
+	RTDBG_AddTrace(rt_debug_grp_, id, line_num, val0 , val1, val2, val3);
 	return E_OK;
 }
 EResultT CModuleControlCallBack::IStopRequest(ESeverityT severity)
@@ -115,12 +96,7 @@ EResultT CModuleControlCallBack::IStopRequest(ESeverityT severity)
 	RTDBG_Stop();
 	return E_OK;
 }
-EResultT CModuleControlCallBack::IGetSysTime(SysTimeT *sys_time_p)
-{
-	*sys_time_p= main_class_ptr_->GetSysTime();
 
-	return E_OK;
-}
 //Class Functions
 void CModuleControlCallBack::AddModule(char* module_name, IModuleControlAPI *control_api, std::string &config_info)
 {
@@ -190,18 +166,6 @@ EResultT CModuleControlCallBack::IMemAreaMount(CMemAreaP *mearea_ptr_, char area
 	ASSERT(FALSE);
 	return E_FAIL;
 
-}
-//Synchronization system and Linux time of the system
-// Options:
-// sys_time_p == NULL && linux_time == NULL : Update the system time due to the current Linux time
-// sys_time_p != NULL && linux_time != NULL : Tuning the system time due to the sync point between Linux time and the System time
-//                                             If such configuration is called the first time that it starts the System time clocks
-// sys_time_p != NULL && linux_time == NULL : Immediately update the system time. It is used for off-line debugging
-EResultT CModuleControlCallBack::ISyncTime(SysTimeT *sys_time_p , timespec *linux_time )
-{
-	main_class_ptr_->ISyncTime(sys_time_p, linux_time);
-
-	return E_OK;
 }
 
 EResultT CModuleControlCallBack::IDelay_us(uint32_t usecs)

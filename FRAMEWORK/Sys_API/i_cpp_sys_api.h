@@ -10,8 +10,9 @@
 #define I_COMP_API_H_
 //#include <asm/cachectl.h>
 //#include <asm/unistd.h>
-
+#include "rt_debug_defs.h"
 #include "rt_debug_api.h"
+#include "rt_debug_cpp_defs.h"
 
 //	Use this macro in order to ignore compiler alignment of data structures
 //	that are not aligned:
@@ -21,71 +22,14 @@
 #include "i_osa_api.h"
 //API definitions for 5G simulator modules
 #define MDO_NAME_SIZE    (80)
-namespace ns_5g_phy
+namespace ai_framework_proj
 {
 	enum EResultT
 	{
 		E_OK,
 		E_FAIL
 	};
-	struct SysTimeT : public GenSysTime
-	{
-	private:
-		uint32_t nsec_correction;
-	public:
 
-		//Add time offset in microseconds to the current system time.
-		void SysTimeUpdate(int32_t usec_diff, uint32_t nsec_remainder= 0)
-		{
-			nsec_correction+= nsec_remainder;
-
-			int32_t offset_tmp = usec_diff  + offset + (nsec_correction/1000);
-			nsec_correction= nsec_correction%1000;
-			int32_t borrow_nsf = offset_tmp <0 ? -1: 0;
-			int32_t nsf_tmp = (offset_tmp / SUBFRAME_USECS + nsf + borrow_nsf);
-			int32_t borrow_nf = nsf_tmp<0 ? -1: 0;
-
-			nf = ( (nsf_tmp/NUM_OF_SF_IN_FRAME  + nf + borrow_nf) % (SYS_FRAMES_NUM+1) + (SYS_FRAMES_NUM+1)) & SYS_FRAMES_NUM;
-
-
-			offset = (SUBFRAME_USECS + offset_tmp%SUBFRAME_USECS ) % SUBFRAME_USECS;
-			nsf = (nsf_tmp % NUM_OF_SF_IN_FRAME + NUM_OF_SF_IN_FRAME) % NUM_OF_SF_IN_FRAME;
-		}
-		void SetNsecCorrection(uint32_t nsec_correction_init)
-		{
-			 nsec_correction = nsec_correction_init;
-		}
-
-		uint32_t GetNsecCorrection()
-		{
-			return nsec_correction ;
-		}
-
-		uint32_t GetSlotNum()
-		{
-			return nsf*NUM_SLOTS_SF + offset/SLOT_DURATION;
-		}
-		uint32_t GetSlotOffset()
-		{
-			return offset%SLOT_DURATION;
-		}
-		void reset()
-		{
-			nf = nsf = offset = 0;
-			nsec_correction = 0;
-		}
-		SysTimeT()
-		{
-			reset();
-		}
-		SysTimeT(GenSysTime &sys_time)
-		{
-			 nf= sys_time.nf;
-			 nsf= sys_time.nsf;
-			 offset= sys_time.offset;
-			 nsec_correction = 0;
-		}
-	};
 	enum EAccessT
 	{
 		E_READ,
@@ -113,119 +57,6 @@ namespace ns_5g_phy
 		E_MAX_OP
 	};
 
-	/******************************************************************************************//*!
-	 *@class TimerEvent_api
-	 *@brief The purpose of this class is to callback after the timer event:
-	 *@brief
-	 *********************************************************************************************/
-	struct TimerEvent_api {
-		//Run the data engine function
-		/******************************************************************************************//*!
-		 *@function: TimerEvCallback
-		 *@brief The purpose of this function is callback after the timer event:
-		 *@brief Parameters:
-		 *@brief SysTimeT *sys_time_p  -- Current time
-		 *@brief int32_t param         -- Special parameter to indicate the event
-		 *@brief int32_t seq_val       -- Additional parameter, which indicates additional sequential parameter. It may be used to set information
-		 *@brief 						  about destination symbol number.
-		 *@brief SysTimeT *dst_time	   -- Destinations system time. It indicates the system time of the event, which is called in advance.
-		 *@brief
-		 *********************************************************************************************/
-
-		virtual void TimerEvCallback(SysTimeT *sys_time_p, int32_t param, int32_t seq_val, SysTimeT *dst_time =NULL)=	0;
-	};
-	enum E_EVENT_PERIOD
-	{
-		E_CUSTOM,
-		E_EVERY_SLOT
-	};
-	struct TimerEventSchedulerT
-	{
-		 E_EVENT_PERIOD event_periodicy;
-		 uint32_t		slot_offset; //Offset in slots. This offset is aligned with the slot start time. For example: 0 current slot, 1 start time of the next slot. Range: 2*(1<< Numerology)
-		 int32_t        usec_offset; //Offset in usecs from the slot start time
-		 uint32_t       *event_offsets; // Pointer to the table of offsets from the stall start time. The actual offset is calculated as sum of usec_offset with every event_offsets elements.
-		 	 	 	 	 	 	 	 	// If it is NULL then only usec_offset value is used.
-		 uint32_t		num_events;     // Number timer events in the event_offset array.
-		 uint32_t       send_val;		// Value to send with timer event call.
-		 uint32_t		*send_vals;
-		 bool           is_permanent;   // Set if the timer event is permanent or not
-		 TimerEvent_api* callback_timer_api;
-
-		/******************************************************************************************//*!
-		 *@function  SetPermanentTimerEvent
-		 *@brief The purpose of this function is to configure the permanent timer events
-		 *@brief Parameters:
-		 *@brief int32_t u_offset   			-- Time advance offset (usecs). If the event should be called in advance, then this parameter should be negative.
-		 *@brief const uint32_t  *ev_offsets    -- Pointer to list of events, which can be called per slot. If it is only one event per slot, then it may be set to NULL
-		 *@brief 								   and u_offset parameter can be used to set the event time.
-		 *@brief uint32_t	n_events			-- Number of events per slot.
-		 *@brief uint64_t   gen_val				-- Value, which used to identify the timer event
-		 *@brief TimerEvent_api* callback_api   -- Pointer to the class, which implements callback of timer event driver
-		 *@brief const uint32_t *vals			-- Pointer to additional sequential values, used per sequential event. For example they may contain information about the symbol number.
-		 *@brief
-		 *********************************************************************************************/
-		void SetPermanentTimerEvent(int32_t u_offset, const uint32_t  *ev_offsets, uint32_t	n_events,
-									uint64_t gen_val, TimerEvent_api* callback_api, const uint32_t *vals=NULL)
-		{
-			ASSERT(callback_api);
-			is_permanent= true;
-			event_periodicy = E_EVERY_SLOT;
-			slot_offset =0;
-			usec_offset = u_offset;
-			event_offsets = (uint32_t*)ev_offsets;
-			num_events= n_events;
-			send_val = gen_val;
-			callback_timer_api = callback_api;
-			send_vals = (uint32_t*)vals;
-		}
-
-		 //Temporary timer event is repeated every slot. It is possible to set single offset or vector of offsets.
-		/******************************************************************************************//*!
-		 *@function  SetPermanentTimerEvent
-		 *@brief The purpose of this function is to configure the temporary timer events
-		 *@brief Parameters:
-		 *@brief uint32_t slot_ofst             -- Offset in slots for the next timer event
-		 *@brief int32_t u_offset   			-- Time advance offset (usecs). If the event should be called in advance, then this parameter should be negative.
-		 *@brief const uint32_t  *ev_offsets    -- Pointer to list of events, which can be called per slot. If it is only one event per slot, then it may be set to NULL
-		 *@brief 								   and u_offset parameter can be used to set the event time.
-		 *@brief uint32_t	n_events			-- Number of events per slot.
-		 *@brief uint64_t   gen_val				-- Value, which used to identify the timer event
-		 *@brief TimerEvent_api* callback_api   -- Pointer to the class, which implements callback of timer event driver
-		 *@brief const uint32_t *vals			-- Pointer to additional sequential values, used per sequential event. For example they may contain information about the symbol number.
-		 *@brief
-		 *********************************************************************************************/
-		void SetTempTimerEvent(uint32_t slot_ofst, const int32_t u_offset, uint32_t  *ev_offsets, uint32_t	n_events,
-									uint64_t val, TimerEvent_api* callback_api, const uint32_t *vals=NULL)
-		{
-			ASSERT(callback_api);
-			is_permanent= false;
-			event_periodicy = E_CUSTOM;
-			slot_offset =slot_ofst;
-			usec_offset = u_offset;
-			event_offsets = ev_offsets;
-			num_events= n_events;
-			send_val = val;
-			callback_timer_api = callback_api;
-			send_vals = (uint32_t*)vals;
-		}
-
-		void Reset()
-		{
-			is_permanent = false;
-			usec_offset = slot_offset= send_val = 0;
-		    num_events = 0;
-		    event_offsets = NULL;
-		    callback_timer_api = NULL;
-		    event_periodicy = E_CUSTOM;
-		    send_vals = NULL;
-		}
-
-		TimerEventSchedulerT()
-		{
-		    Reset();
-		}
-	};
 	struct TraceDataT
 	{
 		uint32_t trace_id;
@@ -295,18 +126,6 @@ namespace ns_5g_phy
 		e_NOT_IN_USE_31
 	};
 
-
-
-	//Profiler counter data
-	struct ProfilerCntD : public ProfileData
-	{
-
-		void Reset()
-		{
-			max_cnt_ = last_cnt_ = average_cnt_ = max_cnt_time_ = 0;
-			meas_num_ = 0;
-		}
-	};
 
 
 #if		(ARCH == INTEL)
@@ -711,18 +530,15 @@ namespace ns_5g_phy
 
 		virtual EResultT IMemAreaDefine(CMemAreaP *mearea_ptr_) = 0;
 		virtual EResultT IRegistryTraceEntry(char *format_str, uint32_t *id) = 0;
-		virtual EResultT IRegistryProfileEntry(CProfileCnt *ptr, char *name, uint32_t *prof_id) = 0;
-		virtual EResultT IRegisterTimerEvent(TimerEventSchedulerT *sched_info) = 0;
+		virtual EResultT IRegistryProfileEntry(CProfileCnt *ptr, const char *name, uint32_t *prof_id) = 0;
 		virtual EResultT ILogData(ESeverityT severity, char *str) = 0;
 		virtual EResultT ITraceData(uint32_t id, uint32_t line_num, uint64_t val0= 0, uint64_t val1=0, uint64_t val2=0, uint64_t val3=0) = 0;
 		virtual EResultT IStopRequest(ESeverityT severity) = 0;
-		virtual EResultT IGetSysTime(SysTimeT *sys_time_p) = 0;
 		virtual EResultT IGetModule(char mod_name[], IModuleControlAPI **mod_ptr) = 0;
 		virtual EResultT IMemAreaMount(CMemAreaP *mearea_ptr_, char area_name[], EAccessT ac_type) = 0;
-		virtual EResultT ISyncTime(SysTimeT *sys_time_p = NULL, timespec *linux_time =NULL ) = 0;
 		virtual EResultT IDelay_us(uint32_t usecs)= 0;
 		virtual EResultT IAllocateEventCnt(char *cnt_name, volatile int64_t **cnt_ptr)= 0;
-		virtual EResultT ISaveProfileInfo(uint32_t prof_id, ProfileData *data) = 0;
+		virtual EResultT ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data) = 0;
 	};
 
 	/*******************************************************************************************//*!
@@ -738,7 +554,7 @@ namespace ns_5g_phy
 		virtual EResultT IWarmStart() = 0;
 		virtual EResultT IHotStart() = 0;
 		virtual EResultT IStop(ESeverityT severity) = 0;
-		virtual EResultT ICall(SysTimeT *sys_time_p, uint32_t param) = 0;
+		virtual EResultT ICall(uint32_t param) = 0;
 		virtual EResultT IConfigure(uint32_t id, void *in, void **out) = 0;
 		virtual EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info) = 0;
 	};
@@ -753,7 +569,7 @@ namespace ns_5g_phy
 	{
 	public:
 		virtual EResultT IStopRequest(ESeverityT severity) = 0;
-		virtual EResultT I_TTI_evt(SysTimeT *sys_time_p) = 0;
+		virtual EResultT I_TTI_evt() = 0;
 	};
 
 	/*******************************************************************************************//*!
@@ -772,12 +588,14 @@ namespace ns_5g_phy
 		virtual EResultT 	ISetLogSeverity(ESeverityT severity) = 0;
 		virtual EResultT 	IProfilerSave(char* file_name) = 0;
 		virtual EResultT 	ITraceSave(char* file_name) = 0;
-		virtual EResultT 	ICall(SysTimeT *sys_time_p, uint32_t param) = 0;
-		virtual EResultT 	ISetBP(SysTimeT *sys_time_p, char *data, uint32_t *id) = 0;
+		virtual EResultT 	ICall(uint32_t param) = 0;
+		virtual EResultT 	ISetBP(const char *data, uint32_t *id) = 0;
 		virtual EResultT 	IClearBP(uint32_t id) = 0;
 		virtual EResultT 	ISendCLI(char* command_str, char **respond) = 0;
 		virtual CMemArea** 	IGetProfilingData(uint32_t *nuentries_)= 0;
 		virtual CMemArea**	IGetLogData(uint32_t *nuentries_) = 0;
+		virtual void 		Delay_us(uint32_t usecs) = 0;
+		virtual void 		AddMemArea(CMemAreaP *mearea_p_) = 0;
 
 	};
 

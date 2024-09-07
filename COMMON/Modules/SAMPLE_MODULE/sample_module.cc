@@ -33,8 +33,7 @@ EResultT CModuleControl::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget 
     LOG(E_MEDIUM, "%s init passed", mod_name_);
 
     //Example of initialization of the profiler counter
-    char prof_name[] = "EXAMPLE_PROF";
-    call_prof_.Init(prof_name, callback_ptr); //INIT Profiler counter
+    call_prof_.Init(MOD_NAME, "EXAMPLE_PROF"); //INIT Profiler counter
     return E_OK;
 }
 EResultT CModuleControl::IColdStart()
@@ -59,20 +58,13 @@ EResultT CModuleControl::IWarmStart()
 	}
 EResultT CModuleControl::IHotStart()
 	{
-		//Example of register the component into the framework scheduler for call it at the beginning of every subframe
-		TimerEventSchedulerT   sched_info;
-		//sched_info.offset = 0;
-		//sched_info.send_val = (uint32_t)E_WAKEUP;
-		//sched_info.callback_mod_api= (void*)static_cast<IModuleControlAPI*>(this);
-		//sched_info.periodic_interval = SUBFRAME_USECS;
-		callback_ptr_->IRegisterTimerEvent(&sched_info);
 		return E_OK;
 	}
 EResultT CModuleControl::IStop(ESeverityT severity)
 	{
 		return E_OK;
 	}
-EResultT CModuleControl::ICall(SysTimeT *sys_time_p, uint32_t param)
+EResultT CModuleControl::ICall(uint32_t param)
 	{
 		static JobReqBase_t *req;
 		if((param == (uint32_t)E_WAKEUP) || (param == (uint32_t)E_DEBUG))
@@ -91,7 +83,7 @@ EResultT CModuleControl::ICall(SysTimeT *sys_time_p, uint32_t param)
 			}
 			call_prof_.Stop();			// finish profiling measure interval
 			clock_gettime(2, &t2);		// t2 = profiler counter
-			LOG(E_MEDIUM, "Result of Phibonachi digit calculation is %d s1= %d s2=%d",val, t1.tv_nsec, t2.tv_nsec);
+			LOG(E_MEDIUM, "Result of Phibonachi digit calculation is %d s1= %ld s2=%ld",val, t1.tv_nsec, t2.tv_nsec);
 
 			// Example access to the memory areas as to the FIFO
 			char *in_p= (char*)in_ptr->PopFIFO();
@@ -122,7 +114,7 @@ EResultT CModuleControl::ICall(SysTimeT *sys_time_p, uint32_t param)
 				job_req_->PushFIFO();
 
 				//Example of call the other module
-				test_module_p_->ICall(sys_time_p, (uint32_t)E_DIRECT);
+				test_module_p_->ICall((uint32_t)E_DIRECT);
 				LOG(E_MEDIUM, "%s sent job to other module", mod_name_);
 
 			}
@@ -189,7 +181,7 @@ CModuleControl::CModuleControl(const char *mod_name)
 class CModuleControl     *g_module_ptr = NULL;
 
 //API function to connect with ITarget API
-extern "C" uint32_t IGetConnectAPI(void **target_ptr)
+extern "C" uint32_t API_CONNECT_FUNC(void **target_ptr)
 {
 	g_module_ptr = new CModuleControl(MOD_NAME);
 	*target_ptr= static_cast<IModuleControlAPI*>(g_module_ptr);

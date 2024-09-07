@@ -176,12 +176,11 @@ std::string Cpy5Gstub::CallModule(std::string mod_name)
 {
 	uint32_t i;
 	std::string res("Passed");
-	SysTimeT cur_time= sim_control_.GetTime();
 	for(i=0; i< num_modules_; i++)
 	{
 		if(strcmp(modules_p_[i].module_name_, mod_name.data()) == 0)
 		{
-			modules_p_[i].module_p_->ICall(&cur_time, (uint32_t)E_DEBUG);
+			modules_p_[i].module_p_->ICall((uint32_t)E_DEBUG);
 			return res;
 		}
 	}
@@ -268,11 +267,7 @@ list Cpy5Gstub::GetLogs()
 
 std::string Cpy5Gstub::GetTime()
 {
-	SysTimeT time= sim_control_.GetTime();
 	std::string res;
-	char buf[100];
-	sprintf(buf,"NF=%d NSF=%d OFFSET=%d",time.nf, time.nsf, time.offset);
-	res= buf;
 	return res;
 }
 
@@ -298,7 +293,6 @@ std::string Cpy5Gstub::RunTest(std::string mod_name, std::string TestPath)
 {
 	uint32_t i;
 	std::string res("Passed");
-	SysTimeT cur_time= sim_control_.GetTime();
 	for(i=0; i< num_modules_; i++)
 	{
 		if(strcmp(modules_p_[i].module_name_, mod_name.data()) == 0)
@@ -307,7 +301,7 @@ std::string Cpy5Gstub::RunTest(std::string mod_name, std::string TestPath)
 			void *ptr_out;
 			char *ptr_in= (char*)TestPath.data();
 			modules_p_[i].module_p_->IConfigure(e_TEST_CONFIG, (void *)ptr_in, &ptr_out);
-			out_res= modules_p_[i].module_p_->ICall(&cur_time, (uint32_t)E_DEBUG);
+			out_res= modules_p_[i].module_p_->ICall((uint32_t)E_DEBUG);
 			if(out_res == E_FAIL)
 			{
 				res = "Failed";
@@ -322,7 +316,6 @@ std::string Cpy5Gstub::ConfigModule(std::string mod_name, uint32_t config_type, 
 {
     uint32_t i;
     std::string res("Passed");
-    SysTimeT cur_time= sim_control_.GetTime();
     for(i=0; i< num_modules_; i++)
     {
         if(strcmp(modules_p_[i].module_name_, mod_name.data()) == 0)

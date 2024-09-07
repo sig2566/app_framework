@@ -19,7 +19,6 @@
 #include "i_api_common.h"
 #include "csim_control.h"
 
-#include "rt_debug_api.h"
 #ifdef RU_PHY
 #include "ru_version.h"
 #else
@@ -29,7 +28,7 @@
 const int NUM_OBJECTS= 1;
 
 using namespace boost::python;
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 /******************************************************************************************//*!
  *@class CMemAccess
  *@brief The purpose of this class is :

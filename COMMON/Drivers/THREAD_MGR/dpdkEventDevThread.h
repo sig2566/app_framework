@@ -13,7 +13,7 @@
 #include "i_thread_api.h"
 
 
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 class ThreadFactory;
 // Abstract base class for all threads in dpdk EventDev
 class DpdkEventDevThread: public WorkerThread_api

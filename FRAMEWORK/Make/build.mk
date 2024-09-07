@@ -23,7 +23,6 @@ endif
 #*****************************************************************
 
 
-
 #Configuration of build parameters depending of DU or RU component
 #Common headers
 SRC_H   := $(SRC_H) $(shell find $(ROOT)/Sys_API -type f \( -name '*.h' -o -name '*.inc' -o -name '*.hpp' \))
@@ -32,7 +31,7 @@ SRC_H_MODULE   := $(shell find . -type f \( -name '*.h' -o -name '*.inc' -o -nam
 PROFILE_CPP_API :=$(ROOT)/../../rt_debug_lib/rt_debug/rt_debug_cpp/api
 PROFILE_DEF_API := $(ROOT)/../../rt_debug_lib/rt_debug/api
 
-HEADERS := $(SRC_H) $(SRC_H_MODULE)
+HEADERS := $(SRC_H) $(SRC_H_MODULE) 
 # Generate a list of unique directories containing header files
 INCLUDE_DIRS := $(sort $(dir $(HEADERS)))
 
@@ -50,11 +49,9 @@ ARCH_DEF = -D ARCH_X86
 BIN := $(ROOT)/../bin
 
 
-
 BUILD_TIME=$(shell date "+DATE:%d/%m/%y_TIME:%H:%M:%S")
 
-
-VERDEF = -D TIME_DATE=\"$(BUILD_TIME)\" -D MOD_NAME=\"$(NAME)\" 
+VERDEF = -D TIME_DATE=\"$(BUILD_TIME)\" -D MOD_NAME=\"$(NAME)\" -DMOD_MACRO=$(NAME) -DAPI_CONNECT_FUNC=$(NAME)_IGetConnectAPI
 
 ifeq (debug, $(mode))
 DEBFLAGS :=-g -O0 -D DEBUG 
@@ -69,11 +66,11 @@ ifeq (release_strip, $(mode))
 DEBFLAGS:=-O3 
 endif
 
-CFLAGS_ADD := $(CFLAGS_ADD) 
+CFLAGS_ADD := $(CFLAGS_ADD)
 
 
 # All Target
-all: CFLAGS:= $(CFLAGS_ADD) $(DEBFLAGS) -D COMMON_PHY
+all: CFLAGS:= $(CFLAGS_ADD) $(DEBFLAGS) 
 all: lib
 
 
@@ -97,7 +94,7 @@ else
 LINK_TOOL:= $(CPP) -shared -Wl,--export-dynamic
 BUILD_TARGET:=-o $(BIN)/$(NAME).so
 endif
-
+LIB_SO :=-L$(BIN) -lrtdebug
 
 lib : $(OBJECTS_CPP) $(OBJECTS_C)
 	@echo $(CPATH)

@@ -10,7 +10,7 @@
 #define API_MODULE_API_I_BASE_MODULE_API_H_
 #include "version.h"
 #include "i_api_common.h"
-namespace ns_5g_phy
+namespace ai_framework_proj
 {
     /*******************************************************************************************//*!
     *@class CBaseModule
@@ -49,7 +49,7 @@ namespace ns_5g_phy
             {
                 return E_OK;
             }
-        virtual EResultT ICall(SysTimeT *sys_time_p, uint32_t param)
+        virtual EResultT ICall(uint32_t param)
             {
         		return E_OK;
             }

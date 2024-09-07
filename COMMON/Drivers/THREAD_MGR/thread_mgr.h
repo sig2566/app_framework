@@ -25,7 +25,7 @@
 
 const uint32_t MSG_CHUNK = 512; //Size of receive message data chunk
 const uint32_t CHECK_SUM_SIZE = 1;
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 /******************************************************************************************//*!
  *@class ThreadFactory

@@ -10,8 +10,7 @@
 #define CMODULECONTROLCALLBACK_H_
 
 #include "i_api_common.h"
-#include "rt_debug_api.h"
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 class CRSE_Control;
 
@@ -22,8 +21,8 @@ class CRSE_Control;
  *@brief The services are called using IModuleControlCallBackAPI interface 
  *@brief Every 5G module is connected with corresponding object. 
  *********************************************************************************************/
-class CModuleControlCallBack: public ns_5g_phy::IModuleControlCallBackAPI {
-	CRSE_Control *main_class_ptr_;
+class CModuleControlCallBack: public ai_framework_proj::IModuleControlCallBackAPI {
+	IGL_DebugAPI *main_class_ptr_;
 	//Profiler counters support
 	CMemAreaP 	     prof_cnt_tab_[MAX_PROFILE_CNT];
 	CProfileCnt     *prof_cnt_q_head_;
@@ -44,20 +43,17 @@ public:
 	virtual ~CModuleControlCallBack();
 	EResultT IMemAreaDefine(CMemAreaP *mearea_ptr_);
 	EResultT IRegistryTraceEntry(char *format_str, uint32_t *id);
-	EResultT IRegistryProfileEntry(CProfileCnt *ptr, char *name, uint32_t *prof_id);
-	EResultT IRegisterTimerEvent(TimerEventSchedulerT *sched_info);
+	EResultT IRegistryProfileEntry(CProfileCnt *ptr, const char *name, uint32_t *prof_id);
 	EResultT ILogData(ESeverityT severity, char *str);
 	EResultT ITraceData(uint32_t id, uint32_t line_num, uint64_t val0= 0, uint64_t val1=0, uint64_t val2=0, uint64_t val3=0) ;
 	EResultT IStopRequest(ESeverityT severity);
-	EResultT IGetSysTime(SysTimeT *sys_time_p);
 	EResultT IGetModule(char mod_name[], IModuleControlAPI **mod_ptr);
 	EResultT IMemAreaMount(CMemAreaP *mearea_ptr_, char area_name[], EAccessT ac_type);
-	EResultT ISyncTime(SysTimeT *sys_time_p = NULL, timespec *linux_time =NULL );
 	EResultT IDelay_us(uint32_t usecs);
 	EResultT IAllocateEventCnt(char *cnt_name, volatile int64_t **cnt_ptr);
-	EResultT ISaveProfileInfo(uint32_t prof_id, ProfileData *data);
+	EResultT ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data);
 
-	void Init(CRSE_Control *ptr)
+	void Init(IGL_DebugAPI *ptr)
 	{
 		main_class_ptr_ = ptr;
 		module_info_.Init();

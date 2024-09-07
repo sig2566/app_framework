@@ -78,13 +78,12 @@ void CSimControl::RestartHot()
 
 void CSimControl::Stop()
 {
-    control_ptr_->IStop(ns_5g_phy::E_HIGH);
+    control_ptr_->IStop(ai_framework_proj::E_HIGH);
 }
 void CSimControl::Start(uint32_t sfn, uint32_t usec)
 {
 	CMemArea *meptr_= mem_areas_p_[sys_time_idx_];
-	SysTimeT* loc_time= (SysTimeT*)((char*)(meptr_->GetReadBufP()));
-	debug_ptr_->ICall( loc_time, (sfn*1000)+usec);
+	debug_ptr_->ICall((sfn*1000)+usec);
 }
 CMemArea **CSimControl::GetMemAreas(uint32_t *nuareas_)
 {
@@ -105,15 +104,9 @@ EResultT CSimControl::IStopRequest(ESeverityT severity)
 {
 	return E_OK;
 }
-EResultT CSimControl::I_TTI_evt(SysTimeT *sys_time_p)
+EResultT CSimControl::I_TTI_evt()
 {
 	return E_OK;
-}
-
-SysTimeT CSimControl::GetTime()
-{
-	SysTimeT *time_p= (SysTimeT*)mem_areas_p_[sys_time_idx_]->GetReadBufP();
-	return *time_p;
 }
 
 std::vector<std::string> &CSimControl::GetProfilerCntrs()
@@ -128,7 +121,7 @@ std::vector<std::string> &CSimControl::GetProfilerCntrs()
 	for(i=0; i<nuprof_cnt_; i++)
 	{
 		measure_cnt=0;
-		ProfilerCntD *cnt_p, cnt_val;
+		ProfileData *cnt_p, cnt_val;
 		char buf[200];
 		cnt_val.Reset();
 
@@ -141,10 +134,10 @@ std::vector<std::string> &CSimControl::GetProfilerCntrs()
 		ASSERT(f_out)
 		fprintf(f_out,"Average, Max, Last_cnt, Max_measure_cnt, Max_cnt_time(nsec)\n");
 #endif
-		while((cnt_p= (ProfilerCntD*)cnt_tab_p[i]->PopFIFO()) !=NULL)
+		while((cnt_p= (ProfileData*)cnt_tab_p[i]->PopFIFO()) !=NULL)
 		{
 
-			//fwrite(cnt_p,sizeof(ProfilerCntD),1,f_out);
+			//fwrite(cnt_p,sizeof(CProfilePoint),1,f_out);
 			measure_cnt++;
 			cnt_val.last_cnt_ = cnt_p->last_cnt_;
 			if(cnt_val.max_cnt_ < cnt_p->max_cnt_)

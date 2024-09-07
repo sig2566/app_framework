@@ -10,8 +10,7 @@ clean:		default
 clean_all:	default
 release:	default
 debug:		default
-ru:		default
-du:		default
+
 
 $(BUILDPROJS):
 	+@make -C $@ $(MAKECMDGOALS)

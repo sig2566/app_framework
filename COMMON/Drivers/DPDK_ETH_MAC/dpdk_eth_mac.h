@@ -19,7 +19,7 @@
 #include "i_dpdk_buffer_manager.h"
 #include "i_dpdk_eth_api.h"
 
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 /******************************************************************************************//*!
  *@class CDPDK_Eth_Mac

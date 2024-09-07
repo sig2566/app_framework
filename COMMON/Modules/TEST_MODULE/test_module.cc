@@ -8,8 +8,8 @@
 #include "i_api_common.h"
 #include "version.h"
 
-using namespace ns_5g_phy;
-class CModuleControl : public IModuleControlAPI, public TimerEvent_api
+using namespace ai_framework_proj;
+class CModuleControl : public IModuleControlAPI
 {
 	IModuleControlCallBackAPI* callback_ptr_;
 	ITarget* 	target_ptr_;
@@ -42,26 +42,17 @@ public:
 	}
 	virtual EResultT IHotStart()
 	{
-		//Register the module for call at the beginning of every subframe
-		TimerEventSchedulerT   sched_info;
-		sched_info.usec_offset = 20;
-		sched_info.send_val = (uint32_t)E_WAKEUP;
-		sched_info.num_events= 1;
-		sched_info.callback_timer_api= static_cast<TimerEvent_api*>(this);
-		sched_info.is_permanent = true;
-		sched_info.event_periodicy = E_EVERY_SLOT;
-		callback_ptr_->IRegisterTimerEvent(&sched_info);
 		return E_OK;
 	}
-	virtual void TimerEvCallback(SysTimeT *sys_time_p, int32_t param, int32_t seq_val, SysTimeT *dst_time)
+	virtual void TimerEvCallback(int32_t param, int32_t seq_val)
 	{
-		ICall(sys_time_p, param);
+		ICall(param);
 	}
 	virtual EResultT IStop(ESeverityT severity)
 	{
 		return E_OK;
 	}
-	virtual EResultT ICall(SysTimeT *sys_time_p, uint32_t param)
+	virtual EResultT ICall(uint32_t param)
 	{
 		if((param == (uint32_t)E_WAKEUP) || (param == (uint32_t)E_DEBUG))
 		{
@@ -88,7 +79,7 @@ public:
 			//Callback call
 			if(req->call_back_p != NULL)
 			{
-				req->call_back_p->ICall(sys_time_p, (uint32_t)E_RESPONSE);
+				req->call_back_p->ICall((uint32_t)E_RESPONSE);
 			}
 			LOG(E_MEDIUM, "%s is called by other module", mod_name_);
 		}
@@ -124,7 +115,7 @@ public:
 class CModuleControl     *g_module_ptr = NULL;
 
 //API function to connect with ITarget API
-extern "C" uint32_t IGetConnectAPI(void **target_ptr)
+extern "C" uint32_t API_CONNECT_FUNC(void **target_ptr)
 {
 	g_module_ptr = new CModuleControl(MOD_NAME);
 	*target_ptr= static_cast<IModuleControlAPI*>(g_module_ptr);

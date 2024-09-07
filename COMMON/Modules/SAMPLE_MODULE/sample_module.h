@@ -11,7 +11,7 @@
 #include "i_api_common.h"
 #include "version.h"
 
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 /******************************************************************************************//*!
  *@class CModuleControl
  *@brief The purpose of this class is :
@@ -37,7 +37,7 @@ public:
     virtual EResultT IWarmStart();
     virtual EResultT IHotStart();
     virtual EResultT IStop(ESeverityT severity);
-    virtual EResultT ICall(SysTimeT *sys_time_p, uint32_t param);
+    virtual EResultT ICall(uint32_t param);
     virtual EResultT IConfigure(uint32_t id, void *in, void **out);
     virtual EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info);
     CModuleControl(const char *mod_name);

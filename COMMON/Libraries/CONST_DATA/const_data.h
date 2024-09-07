@@ -23,7 +23,7 @@
 
 //Initialization data types
 
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 extern int16_t INV_FULL_LUT[];
 

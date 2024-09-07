@@ -4,13 +4,14 @@
  *  Created on: Feb 11, 2018
  *      Author: swuser
  */
-#include "i_api_common.h"
+
 
 #ifndef CSIMCONTROL_H_
 #define CSIMCONTROL_H_
+#include "i_api_common.h"
 #include <vector>
 #include <string>
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 class CSimControl : public IGL_ControlCallBackAPI
 {
@@ -38,8 +39,7 @@ public:
 	CModuleInfo* GetModules(uint32_t *numodules_);
 	void GetInfo(EDebugOperationT cmd, void *input, void **out);
 	virtual EResultT IStopRequest(ESeverityT severity);
-	virtual EResultT I_TTI_evt(SysTimeT *sys_time_p);
-	SysTimeT GetTime();
+	virtual EResultT I_TTI_evt();
 	std::vector<std::string> &GetProfilerCntrs();
 	std::vector<std::string> &GetLastLogs();
 	EResultT SetSeverity(ESeverityT prio)

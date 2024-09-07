@@ -14,7 +14,6 @@ BOOST_INC = /usr/include/boost
 BOOST_LIB = /ust/lib
 #PYTHON_VERSION = -3.6
 #PYTHON_INCLUDE = /opt/anaconda3/include/python3.7m
-LIB_SO :=-L$(BIN) -lrtdebug.a
  
 
 OPT_H = -I$(BOOST_INC)

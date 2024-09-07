@@ -20,7 +20,7 @@
 
 #define MAX_BUFFERS_TO_PREALLOCATE      (1024)  //for preallocating mbuff_arr
 
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 typedef struct mempool_info
 {

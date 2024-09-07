@@ -582,8 +582,6 @@ EResultT ClassifiedQueue::ReceiveFromFronthaul_NonRTC(rte_mbuf*& pkt)
 			double modulu_subframes_in_sec      = (double)modulu_timesttamp_sfn_in_sec-( double)modulu_number_floor*((double)(0.001));
 			sfn_systime.offset                  = (uint32_t)((double)modulu_subframes_in_sec*(double)MILLION); //MILLION is the number of micro-sec in second
 
-			callback_ptr_->ISyncTime(nullptr, current_timestamp_ptr_);
-			callback_ptr_->ISyncTime(&sfn_systime, nullptr);
 
 			*is_first_rx_packet_ = false;
 		}

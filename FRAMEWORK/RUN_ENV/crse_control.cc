@@ -8,7 +8,7 @@
 
 #include "crse_control.h"
 #include "target.h"
-#include <boost/regex.hpp>
+
 
 //Running thread wrapper function
 static void *(start_frame_work_thread)(void *arg)
@@ -59,38 +59,12 @@ EResultT CRSE_Control::IInit(IGL_ControlCallBackAPI *control_callback_ptr, const
 	IModuleControlAPI *mod_ptr = NULL;
 	std::string config_str = "";
 	//Define profiler and logs of this module
-	top_services_.Init(this);
+	top_services_.Init(static_cast<IGL_DebugAPI *>(this));
 	top_services_.AddModule(mod_name_, NULL, config_str);
-	prof_cnt_gen_.Init(prof_cnt_name, callback_ptr_);
-	prof_timer_.Init(prof_ev_timer_, callback_ptr_);
-
-	{
-		//Add system time area and init
-		const uint32_t TIME_BUF_SIZE = 4;
-		char time_area_name[]= "SYS_TIME";
-		CMemArea time_area, *time_area_p;
-		time_area.Setup(TIME_BUF_SIZE, sizeof(SysTimeT), time_area_name, E_WRITE, 0);
-		time_area_p_ = &time_area;
-		AddMemArea(&time_area_p_);
-
-		//Add FIFO queue of timer event requests.
-		char timer_events_req_area[] = "TIMER_EVENT_REQ";
-		CMemArea tmp_req_area;
-		tmp_req_area.Setup(MAX_TIMER_EVENTS, sizeof(CSchedulerData), timer_events_req_area, E_WRITE, 0);
-		timer_events_q_= &tmp_req_area;
-		AddMemArea(&timer_events_q_);
-
-		for(int i= 0; i<TIME_BUF_SIZE; i++)
-		{
-			SysTimeT *time_p= (SysTimeT*)time_area_p_->AllocFIFO();
-			time_p->nf =0;
-			time_p->nsf = 0;
-			time_p->offset = 0;
-			time_area_p_->DualBufSwap();
-		}
+	prof_cnt_gen_.Init(mod_name_, prof_cnt_name);
+	prof_timer_.Init(mod_name_, prof_ev_timer_);
 
 
-	}
 	//Timer initialization
 	DataReset();
 	OSA_spinlock_create(&timer_lock_);
@@ -114,7 +88,7 @@ EResultT CRSE_Control::IInit(IGL_ControlCallBackAPI *control_callback_ptr, const
 
 			char mod_name[GEN_BUF_SIZE];
 			char buf[GEN_BUF_SIZE];
-			char file_name[GEN_BUF_SIZE];
+			char file_name[GEN_BUF_SIZE*2];
 			std::stringstream s1;
 			std::string modname = v.second.get<std::string>("name");
 			ptree config_info_tree= v.second.get_child("config");
@@ -243,20 +217,6 @@ EResultT CRSE_Control::IWarmStart()
 EResultT CRSE_Control::IHotStart()
 {
 	uint32_t i;
-	__align(SYS_CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
-
-	//It is necessary to sync rge system and Linux clocks after every hot start.
-	timer_ev_params.is_time_sync_ready_= false;
-	timer_ev_params.sys_time_.reset();
-	SysTimeT *addrW= (SysTimeT *)time_area_p_->AllocFIFO();
-	SysTimeT *addrR= (SysTimeT *)time_area_p_->GetReadBufP();
-	clock_gettime(CLOCK_MONOTONIC, &timer_ev_params.last_linux_time_);
-	timer_ev_params.last_timer_event_scheduler_entry_=0;
-	timer_ev_params.current_timer_event_scheduler_entry_ = 0;
-	memcpy((char*)&timer_ev_params_, (char*)&timer_ev_params, sizeof(timer_ev_params));
-	addrW->reset();
-	addrR->reset();
-
 
 	for(i=0; i < num_modules_; i++)
 	{
@@ -270,10 +230,6 @@ EResultT CRSE_Control::IStop(ESeverityT severity)
     uint32_t i;
     run_period_usec_ = 0; //Inform the running thread to stop running
     //Wait to stop running
-    while(timer_ev_params_.is_running_!=false)
-    {
-        OSA_sleep(20);
-    }
 
     for(i=0; i < num_modules_; i++)
     {
@@ -371,14 +327,13 @@ EResultT CRSE_Control::ITraceSave(char* file_name)
 }
 
 //Execution the system
-EResultT CRSE_Control::ICall(SysTimeT *sys_time_p, uint32_t param)
+EResultT CRSE_Control::ICall(uint32_t param)
 {
     run_period_usec_ = (int32_t)param;
     if(run_period_usec_ == 0)
     {
         run_period_usec_ = -1; //Setting for running forever
     }
-    timer_ev_params_.is_running_ = true;
     OSA_mutex_unlock(&sync_mutex_);
     OSA_sleep(10);
     // for RT debug - temporary
@@ -389,7 +344,7 @@ EResultT CRSE_Control::ICall(SysTimeT *sys_time_p, uint32_t param)
     return E_OK;
 }
 
-EResultT CRSE_Control::ISetBP(SysTimeT *sys_time_p, char *data, uint32_t *id)
+EResultT CRSE_Control::ISetBP(const char *data, uint32_t *id)
 {
 	return E_OK;
 }
@@ -437,212 +392,15 @@ void CRSE_Control::AddMemArea(CMemAreaP *mearea_p_)
 	num_areas_++;
 }
 
-//Add timer event request to the timer_events_q_
-void CRSE_Control::RegisterTimerEvent(TimerEventSchedulerT *sched_info)
-{
-	ASSERT(sched_info->slot_offset< NUM_SUBF_IN_TIME_EVENT_TAB*NUM_SLOTS_SF); // NUM_SUBF_IN_TIME_EVENT_TAB*NUM_SLOTS_SF =4
-	ASSERT(sched_info->usec_offset < SUBFRAME_USECS);
-	timer_events_q_->PushFIFO_MT(sched_info, sizeof(TimerEventSchedulerT));
-}
-void CRSE_Control::SetSingleTimerEvent(TimerEventSchedulerT *sched_info, uint32_t timer_event_entry, int32_t num)
-{
-	//Only one event is added
-	volatile CSchedulerData *sched_entry = NULL;
-	if(sched_info->is_permanent)
-	{
-		ASSERT(perm_sched_attached_cnts_[timer_event_entry]< MAX_TIMER_EVENTS);
-		sched_entry = &perm_timer_event_scheduler_[timer_event_entry][perm_sched_attached_cnts_[timer_event_entry]];
-		perm_sched_attached_cnts_[timer_event_entry]++;
-	}
-	else
-	{
-		ASSERT(tmp_sched_attached_cnts_[timer_event_entry]< MAX_TIMER_EVENTS);
-		sched_entry = &tmp_timer_event_scheduler_[timer_event_entry][tmp_sched_attached_cnts_[timer_event_entry]];
-		tmp_sched_attached_cnts_[timer_event_entry]++;
-	}
-
-	if((num !=-1) && (sched_info->send_vals != NULL))
-	{
-		sched_entry->seq_val =  sched_info->send_vals[num];
-	}
-	sched_entry->cookie = sched_info->send_val;
-	sched_entry->target_offset= sched_info->usec_offset;
-	sched_entry->callback_timer_api = sched_info->callback_timer_api;
-}
-void CRSE_Control::SetTimerEvent(TimerEventSchedulerT *sched_info, SysTimeT *sys_time_p)
-{
-	uint32_t timer_event_entry = 0, i;
-	uint32_t j, num_slots=1;
-	//Calculate the entry in the timer events table, using sched_info data
-	uint32_t curr_slot_pos = ((sys_time_p->nsf*NUM_SLOTS_SF + (SLOT_DURATION + sys_time_p->offset)/SLOT_DURATION) * SLOT_DURATION)%TIME_EVENT_TAB_ENTRIES_NUM;
-	timer_event_entry = ((curr_slot_pos + sched_info->slot_offset)* SLOT_DURATION + sched_info->usec_offset)%TIME_EVENT_TAB_ENTRIES_NUM;
-
-	if(sched_info->event_periodicy == E_EVERY_SLOT)
-	{
-		num_slots = NUM_SUBF_IN_TIME_EVENT_TAB * NUM_SLOTS_SF; //Set events for 4 slots. That is distance for timing events setting.
-	}
-	for(j=0; j< num_slots;  j++)
-	{
-		if(sched_info->event_offsets == NULL )
-		{
-			SetSingleTimerEvent(sched_info, timer_event_entry);
-		}
-		else
-		{
-			for(i=0; i < sched_info->num_events; i++)
-			{
-				uint32_t event_entry = (timer_event_entry + sched_info->event_offsets[i]/SCHED_INTERVAL_USECS)%TIME_EVENT_TAB_ENTRIES_NUM;
-				SetSingleTimerEvent(sched_info, event_entry, i);
-			}
-		}
-		timer_event_entry = (timer_event_entry + SLOT_DURATION) % TIME_EVENT_TAB_ENTRIES_NUM;
-	}
-}
-
-//Synchronization system and Linux time of the system
-// Options:
-// sys_time_p == NULL && linux_time == NULL : Update the system time due to the current Linux time
-// sys_time_p != NULL && linux_time != NULL : Tuning the system time due to the sync point between Linux time and the System time
-//                                             If such configuration is called the first time that it starts the System time clocks
-// sys_time_p != NULL && linux_time == NULL : Immediately update the system time. It is used for off-line debugging
-// sys_time_p == NULL && linux_time != NULL : Debugging mode when the Linux time watch simulating by the test module. It is
-//											  used for off line testing
-EResultT CRSE_Control::ISyncTime(SysTimeT *sys_time_p, timespec *linux_time)
-{
-	TimerEventSchedulerT sched_info;
-	OSA_spinlock_lock(&timer_lock_);
-	//Update System time
-	struct timespec cur_time;
-	clock_gettime(CLOCK_MONOTONIC, &cur_time);
-  __align(SYS_CACHE_ALIGNMENT) TimeEvParams timer_ev_params;
-	memcpy((char*)&timer_ev_params, (char*)&timer_ev_params_, sizeof(timer_ev_params));
-	int64_t nsec_diff = DiffBetweenTimespec(cur_time, timer_ev_params.last_linux_time_);
-	int64_t usec_diff = nsec_diff/1000;
-	//Add new timer events
-	while(timer_events_q_->PopFIFO_MT(&sched_info, sizeof(TimerEventSchedulerT)))
-	{
-		SetTimerEvent(&sched_info, &timer_ev_params.sys_time_);
-	}
-
-	//Sync the system time with the latest Linux time
-	if((sys_time_p == NULL) && (linux_time == NULL))
-	{
-		//Update the system time due to change of the Linux time only if they hte system and Linux clocks were synchronized before.
-		if(timer_ev_params.is_time_sync_ready_== true)
-		{
-			if(usec_diff > 0)
-			{
-				timer_ev_params.sys_time_ = SysTimeUpdate(usec_diff, &timer_ev_params.sys_time_, nsec_diff%1000);
-				timer_ev_params.last_linux_time_ = cur_time;
-			}
-		}
-		else //Fix 26/2/20 for calling CB in case symc time not updated
-		{
-			memcpy((char*)&timer_ev_params_, (char*)&timer_ev_params, sizeof(timer_ev_params));
-			OSA_spinlock_unlock(&timer_lock_);
-			return E_OK;
-
-		}
-	}
-	else if((sys_time_p != NULL) && (linux_time != NULL))
-	{
-		//Tuning the system time due to synchronization point, provided by the function parameters
-		int32_t diff_usecs = DiffBetweenTimespec(*linux_time, cur_time)/1000;
-		timer_ev_params.sys_time_ = *sys_time_p;
-		timer_ev_params.sys_time_ = SysTimeUpdate(-diff_usecs, &timer_ev_params.sys_time_);
-
-		//Set the timer position into the timer events table.
-		timer_ev_params.last_timer_event_scheduler_entry_ = (timer_ev_params.sys_time_.nsf*NUM_SLOTS_SF * SLOT_DURATION + timer_ev_params.sys_time_.offset) %TIME_EVENT_TAB_ENTRIES_NUM;
-		timer_ev_params.last_linux_time_ = cur_time;
-		//System and Linux clocks are in sync now.
-		timer_ev_params.is_time_sync_ready_ = true;
-	}
-	else if ((sys_time_p != NULL) && (linux_time == NULL))
-	{
-		//Debugging mode. Immediate update the system time
-		timer_ev_params.sys_time_ = *sys_time_p;
-		timer_ev_params.sys_time_ = SysTimeUpdate(0, &timer_ev_params.sys_time_);
-		timer_ev_params.last_linux_time_ = cur_time;
-		//System and Linux clocks are out off sync now.
-		timer_ev_params.is_time_sync_ready_ = false;
-
-	}
-	else
-	{
-		//Debugging mode. Update Linux time
-		int64_t nsec_diff = DiffBetweenTimespec(*linux_time, timer_ev_params.last_linux_time_);
-		uint64_t diff= nsec_diff/1000;
-		uint64_t abs_diff = diff < 0 ? diff * (-1) : diff;
-
-		if(abs_diff > SLOT_DURATION)
-		{
-			//Time was changed for more then 1 slot. It is assumed as debug initialize stage. So set new Linux debugging time
-			timer_ev_params.last_timer_event_scheduler_entry_ = (timer_ev_params.sys_time_.nsf*NUM_SLOTS_SF * SLOT_DURATION + timer_ev_params.sys_time_.offset) %TIME_EVENT_TAB_ENTRIES_NUM;
-			timer_ev_params.last_linux_time_ = *linux_time;
-		}
-		else if(diff > 0) //Linux time was increased less then 1 slot. Update the system time and call timer events
-		{
-			timer_ev_params.sys_time_ = SysTimeUpdate(diff, &timer_ev_params.sys_time_, nsec_diff%1000);
-			timer_ev_params.last_linux_time_ = *linux_time;
-		}
-
-		//System and Linux clocks are out off sync now.
-		timer_ev_params.is_time_sync_ready_ = false;
 
 
-	}
-
-	//Call timing events
-	uint32_t current_timer_event_scheduler_entry_ =
-			(timer_ev_params.sys_time_.nsf*NUM_SLOTS_SF * SLOT_DURATION + timer_ev_params.sys_time_.offset) %TIME_EVENT_TAB_ENTRIES_NUM;
-	uint32_t pos = timer_ev_params.last_timer_event_scheduler_entry_;
-	SysTimeT *read_sys_time = (SysTimeT *)time_area_p_->GetReadBufP();
-	uint64_t prof_timer_ev_delay = 0;
-	uint32_t timer_ev_period= (TIME_EVENT_TAB_ENTRIES_NUM + current_timer_event_scheduler_entry_ - pos)%TIME_EVENT_TAB_ENTRIES_NUM;
-	while(pos != current_timer_event_scheduler_entry_)
-	{
-		uint32_t i;
-		pos = (pos+1)%TIME_EVENT_TAB_ENTRIES_NUM;
-
-		//Calculate profiling
-		prof_timer_ev_delay += timer_ev_period * (tmp_sched_attached_cnts_[pos] + perm_sched_attached_cnts_[pos]);
-		timer_ev_period--;
-
-		//Send temporary events
-		for(i=0; i< tmp_sched_attached_cnts_[pos]; i++)
-		{
-			SysTimeT dest_time= *read_sys_time;
-			dest_time.SysTimeUpdate(-tmp_timer_event_scheduler_[pos][i].target_offset-timer_ev_period);
-			tmp_timer_event_scheduler_[pos][i].callback_timer_api->TimerEvCallback(read_sys_time, tmp_timer_event_scheduler_[pos][i].cookie,
-																					tmp_timer_event_scheduler_[pos][i].seq_val, &dest_time);
-		}
-		tmp_sched_attached_cnts_[pos] = 0; //Clean events table
-		//Send permanent events
-		for(i=0; i< perm_sched_attached_cnts_[pos]; i++)
-		{
-			SysTimeT dest_time= *read_sys_time;
-			dest_time.SysTimeUpdate(-perm_timer_event_scheduler_[pos][i].target_offset-timer_ev_period);
-			perm_timer_event_scheduler_[pos][i].callback_timer_api->TimerEvCallback(read_sys_time,
-																					perm_timer_event_scheduler_[pos][i].cookie,
-																					perm_timer_event_scheduler_[pos][i].seq_val,
-																					&dest_time);
-		}
-
-	};
-	prof_timer_.Stop(&prof_timer_ev_delay);
-	timer_ev_params.last_timer_event_scheduler_entry_ = current_timer_event_scheduler_entry_;
-	memcpy((char*)&timer_ev_params_, (char*)&timer_ev_params, sizeof(timer_ev_params));
-	OSA_spinlock_unlock(&timer_lock_);
-	return E_OK;
-}
 
 void CRSE_Control::thread_run()
 {
 
    if(run_period_usec_ == 0)
     {
-        //Stop running
-    	timer_ev_params_.is_running_ = false;
+
         OSA_mutex_lock(&sync_mutex_);
     }
     if(run_period_usec_ == -1)
@@ -658,7 +416,6 @@ void CRSE_Control::thread_run()
     }
     prof_cnt_gen_.Start();
     usleep(5);
-    ISyncTime(NULL, NULL);
     prof_cnt_gen_.Stop();
 
 }

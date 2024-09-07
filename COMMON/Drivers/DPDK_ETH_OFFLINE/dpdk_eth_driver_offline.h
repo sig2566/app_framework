@@ -30,7 +30,7 @@ const uint32_t MSG_CHUNK = 512; //Size of receive message data chunk
 const uint32_t CHECK_SUM_SIZE = 1;
 
 
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 #define MAX_INGRESS_QUEUE_SIZE	INGRESS_LAST_CLASSIFIED_QUEUE	//	Maximal size of Ingress queue
 #define MAX_EGRESS_QUEUE_SIZE	LAST_EGRESS_QUEUE				//	Maximal size of Egress queue

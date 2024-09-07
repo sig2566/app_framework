@@ -9,7 +9,7 @@
 #define TARGET_H_
 #include "crse_control.h"
 #include "version.h"
-using namespace ns_5g_phy;
+using namespace ai_framework_proj;
 
 class CTarget : public ITarget
 {
