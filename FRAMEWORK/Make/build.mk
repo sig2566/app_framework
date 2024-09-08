@@ -8,7 +8,7 @@ SHELL	:= /bin/bash
 OSTYPE	:= $(shell uname)
 #*********************************************************
 # Check Mandatory External variables definitions    
-#*****************************************************************
+#**************************************************************LIB_SO***
 ifndef ROOT
 $(error ROOT is not defined. Aborting)
 endif
@@ -94,7 +94,7 @@ else
 LINK_TOOL:= $(CPP) -shared -Wl,--export-dynamic
 BUILD_TARGET:=-o $(BIN)/$(NAME).so
 endif
-LIB_SO :=-L$(BIN) -lrtdebug
+LIB_SO += -L$(BIN) -lrtdebug
 
 lib : $(OBJECTS_CPP) $(OBJECTS_C)
 	@echo $(CPATH)
@@ -112,7 +112,7 @@ $(OBJECTS_C): $(SRC_C) $(SRC_H) $(SRC_INC)
 	@echo $(SRC_C) $(SRC_H)
 	@echo $(OBJECTS_C)
 	@test -d $(OBJ) || mkdir -p $(OBJ) 
-	$(CC)  $(INCLUDE_FLAGS) $(VERDEF) $(ARCH_DEF) $(CFLAGS)  -fPIC -c $(SRC_C)
+	$(CC)   -fPIC -c $(SRC_C) $(INCLUDE_FLAGS) $(VERDEF) $(ARCH_DEF) $(CFLAGS)
 
 .PHONY: clean
 clean:
