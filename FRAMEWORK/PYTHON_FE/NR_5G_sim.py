@@ -1,13 +1,13 @@
-import py5Gstub
-ver= py5Gstub.ver()
+import PyStub
+ver= PyStub.ver()
 print(ver)
-#py5Gstub.init("../COMMON/Projects/FRAMEWORK/sys_configure.xml")   
-py5Gstub.init("../COMMON/Projects/FRAMEWORK/sys_main_5g_handler.xml")      
-py5Gstub.modulenames()
-py5Gstub.areanames()
-py5Gstub.start_logs()
-#py5Gstub.run_test("MAIN_5G_HANDLER","")
-py5Gstub.run_test("HANDLER_TEST_MOD","../Tests/DU/GLUE_LOGIC_TEST/Test_Vec/Test1")
+#PyStub.init("../COMMON/Projects/FRAMEWORK/sys_configure.xml")   
+PyStub.init("../COMMON/Projects/FRAMEWORK/sys_main_5g_handler.xml")      
+PyStub.modulenames()
+PyStub.areanames()
+PyStub.start_logs()
+#PyStub.run_test("MAIN_5G_HANDLER","")
+PyStub.run_test("HANDLER_TEST_MOD","../Tests/DU/GLUE_LOGIC_TEST/Test_Vec/Test1")
 # init: load all shared libraries
 #		init all modules
 #		restart al modules 
@@ -17,16 +17,16 @@ py5Gstub.run_test("HANDLER_TEST_MOD","../Tests/DU/GLUE_LOGIC_TEST/Test_Vec/Test1
 #		init profilers
 
 # prints/get profiling results
-py5Gstub.prof()
+PyStub.prof()
 # prints/get logs out
-buf=py5Gstub.logs()
+buf=PyStub.logs()
 print(len(buf))
 for st in buf:
     print(st)
     
     
 
-buf=py5Gstub.logs()
+buf=PyStub.logs()
 print(len(buf))
 for st in buf:
     print(st)  

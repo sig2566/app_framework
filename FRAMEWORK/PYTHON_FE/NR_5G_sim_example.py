@@ -1,7 +1,7 @@
 #import sys
 #sys.path.append('../../../bin')
-import py5Gstub
-ver= py5Gstub.ver()
+import PyStub
+ver= PyStub.ver()
 print(ver)
 # init: load all shared libraries
 #		init all modules
@@ -10,24 +10,24 @@ print(ver)
 #		connection betwenn famework componnents 
 #		init log system 
 #		init profilers
-py5Gstub.init("../COMMON/Projects/FRAMEWORK/sys_configure.xml")      
+PyStub.init("../COMMON/Projects/FRAMEWORK/sys_configure.xml")      
 # prints/get list of modules names
-py5Gstub.modulenames()
+PyStub.modulenames()
 # prints/get list of mem areas names
-py5Gstub.areanames()
+PyStub.areanames()
 # call module stand alone 
-py5Gstub.callmod("SAMPLE_MODULE")
+PyStub.callmod("SAMPLE_MODULE")
 # prints/get profiling results
-py5Gstub.stop()
-py5Gstub.prof()
+PyStub.stop()
+PyStub.prof()
 
 # prints/get logs out
-py5Gstub.logs()
+PyStub.logs()
 
 
-areas= py5Gstub.areanames()
+areas= PyStub.areanames()
 print (areas)
-module_names =  py5Gstub.modulenames()
+module_names =  PyStub.modulenames()
 print(module_names)
 
 #/////////////////////////////
@@ -35,7 +35,7 @@ print(module_names)
 #/////////////////////////////
 
 # in_mem -> TEST_MEM_AREA_1 buf
-in_mem = py5Gstub.getmem('TEST_MEM_AREA_1')
+in_mem = PyStub.getmem('TEST_MEM_AREA_1')
 
 out_r = [0,1,2,3,4,5,6,7,8]
 print(out_r)
@@ -56,19 +56,19 @@ print(in_f)
 out_r = [9,8,4,0,2,100,200]
 print(out_r)
 in_mem.pushu32(out_r)
-py5Gstub.callmod("SAMPLE_MODULE")		# call SAMPLE_MODULE.ICall
-py5Gstub.prof()
-py5Gstub.logs()
+PyStub.callmod("SAMPLE_MODULE")		# call SAMPLE_MODULE.ICall
+PyStub.prof()
+PyStub.logs()
 
 # out_mem -> TEST_MEM_AREA_2 buf
-out_mem = py5Gstub.getmem('TEST_MEM_AREA_2')
+out_mem = PyStub.getmem('TEST_MEM_AREA_2')
 
 out_tst= out_mem.popu32()
 print(out_tst)
 bool(set(out_r).intersection(out_tst)) #Compare two buffers
 
-py5Gstub.run(20000)
-py5Gstub.prof()
+PyStub.run(20000)
+PyStub.prof()
 
 
 

@@ -1,5 +1,5 @@
 /******************************************************************
- * cpy5gstub.cc
+ * cPyStub.cc
  * Author: Igor Shoihet
  * Copyright (c) 2018 - 2020 Airspan Networks
  * All Rights Reserved.
@@ -7,9 +7,9 @@
  *******************************************************************/
 
 
-#include "cpy5gstub.h"
+#include "cpystub.h"
 
-extern Cpy5Gstub sim5g[];
+extern CPyStub sim5g[];
 static uint32_t curr_cell = 0;
 
 //Python wrapper function
@@ -280,7 +280,7 @@ list EvCntList()
 }
 //Expose classes to PYTHON
 
-BOOST_PYTHON_MODULE(py5Gstub)
+BOOST_PYTHON_MODULE(PyStub)
 {
 	//fs::python::init_and_export_converters();
 	class_<CMemAccess>("CMemAccess")
@@ -299,15 +299,15 @@ BOOST_PYTHON_MODULE(py5Gstub)
 
 
 
-	class_<Cpy5Gstub>("Cpy5Gstub", init<>())
-		.def("run",&Cpy5Gstub::Run)
-		.def("time",&Cpy5Gstub::GetTime)
-		.def("getmem",&Cpy5Gstub::GetMemArea,return_value_policy<manage_new_object>())
-		.def("callmod",&Cpy5Gstub::CallModule)
-		.def("modnames",&Cpy5Gstub::GetModulesNames)
-		.def("areas",&Cpy5Gstub::GetMemAreasNames)
-		.def("version",&Cpy5Gstub::Version)
-		.def("init",&Cpy5Gstub::Init);
+	class_<CPyStub>("CPyStub", init<>())
+		.def("run",&CPyStub::Run)
+		.def("time",&CPyStub::GetTime)
+		.def("getmem",&CPyStub::GetMemArea,return_value_policy<manage_new_object>())
+		.def("callmod",&CPyStub::CallModule)
+		.def("modnames",&CPyStub::GetModulesNames)
+		.def("areas",&CPyStub::GetMemAreasNames)
+		.def("version",&CPyStub::Version)
+		.def("init",&CPyStub::Init);
 
 		def("init", Init);
 		def("areanames",GetMemAreasNames);
@@ -344,4 +344,4 @@ BOOST_PYTHON_MODULE(py5Gstub)
 		def("debug_cntl",EvCntList);
 }
 
-//		.def("version",&Cpy5Gstub::Version)
+//		.def("version",&CPyStub::Version)

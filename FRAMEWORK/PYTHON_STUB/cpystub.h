@@ -1,5 +1,5 @@
 /******************************************************************
- * cpy5gstub.h
+ * cPyStub.h
  * Author: Igor Shoihet
  * Copyright (c) 2018 - 2020 Airspan Networks
  * All Rights Reserved.
@@ -7,8 +7,8 @@
  *******************************************************************/
 
 
-#ifndef CPY5GSTUB_H_
-#define CPY5GSTUB_H_
+#ifndef CPyStub_H_
+#define CPyStub_H_
 
 #include <string>
 #include <vector>
@@ -19,11 +19,9 @@
 #include "i_api_common.h"
 #include "csim_control.h"
 
-#ifdef RU_PHY
-#include "ru_version.h"
-#else
-#include "du_version.h"
-#endif
+
+#include "version.h"
+
 //#include <boost/date_time.hpp>
 const int NUM_OBJECTS= 1;
 
@@ -193,11 +191,11 @@ public:
 };
 
 /******************************************************************************************//*!
- *@class Cpy5Gstub
+ *@class CPyStub
  *@brief The purpose of this class is :
  *@brief Implementation main interface with Python shell
   *********************************************************************************************/
-class Cpy5Gstub {
+class CPyStub {
 	CSimControl sim_control_;
 	CMemArea		**mem_areas_p_;
 	CModuleInfo		*modules_p_;
@@ -248,18 +246,18 @@ public:
 		sim_control_.SendCLI(command_str, respond);
 	}
 
-	Cpy5Gstub()
+	CPyStub()
 	{
 		ResetData();
 	}
 	void ResetData();
-	Cpy5Gstub(const Cpy5Gstub& x)
+	CPyStub(const CPyStub& x)
 	{
 		ResetData();
 		ASSERT(0);
 	}
 
-	virtual ~Cpy5Gstub();
+	virtual ~CPyStub();
 };
 
-#endif /* CPY5GSTUB_H_ */
+#endif /* CPyStub_H_ */

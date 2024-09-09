@@ -1,5 +1,5 @@
 /******************************************************************
- * cpy5gstub.cc
+ * cPyStub.cc
  * Author: Igor Shoihet
  * Copyright (c) 2018 - 2020 Airspan Networks
  * All Rights Reserved.
@@ -7,9 +7,9 @@
  *******************************************************************/
 
 
-#include "cpy5gstub.h"
+#include "cpystub.h"
 
-void Cpy5Gstub::ResetData()
+void CPyStub::ResetData()
 {
 	// TODO Auto-generated constructor stub
 	uint32_t i;
@@ -24,11 +24,11 @@ void Cpy5Gstub::ResetData()
 
 }
 
-Cpy5Gstub::~Cpy5Gstub() {
+CPyStub::~CPyStub() {
 	// TODO Auto-generated destructor stub
 }
 
-std::string Cpy5Gstub::SetFileOut(std::string name)
+std::string CPyStub::SetFileOut(std::string name)
 {
 	if(name.size() != 0)
 	{
@@ -41,18 +41,18 @@ std::string Cpy5Gstub::SetFileOut(std::string name)
 	}
 	return "Passed";
 }
-std::string Cpy5Gstub::OutLogOn()
+std::string CPyStub::OutLogOn()
 {
 	out_2_terminal_= TRUE;
 	return "Passed";
 
 }
-std::string Cpy5Gstub::OutLogOff()
+std::string CPyStub::OutLogOff()
 {
 	out_2_terminal_= FALSE;
 	return "Passed";
 }
-void Cpy5Gstub::OutThread(uint32_t num)
+void CPyStub::OutThread(uint32_t num)
 {
 
 	//boost::posix_time::seconds workTime(1);
@@ -82,7 +82,7 @@ void Cpy5Gstub::OutThread(uint32_t num)
 
 //It should be called after Init
 #define HANDLER_MODDULE   "MAIN_5G_HANDLER"
-uint32_t Cpy5Gstub::AS_PHY_Connect()
+uint32_t CPyStub::AS_PHY_Connect()
 {
     char mod_name2[] = HANDLER_MODDULE;
     void *tmp_api = NULL;
@@ -99,7 +99,7 @@ uint32_t Cpy5Gstub::AS_PHY_Connect()
 
     return 0;
 }
-std::string Cpy5Gstub::Init(std::string &path)
+std::string CPyStub::Init(std::string &path)
 {
 	std::string  res("Passed");
 	const char *ptr= path.data();
@@ -118,13 +118,13 @@ std::string Cpy5Gstub::Init(std::string &path)
 	}
 
 	//Open output terminal window and start logging thread
-	out_thread_ = boost::thread(&Cpy5Gstub::OutThread, this, 2);
+	out_thread_ = boost::thread(&CPyStub::OutThread, this, 2);
 
 	return res;
 }
 
 
-std::string Cpy5Gstub::StopSys()
+std::string CPyStub::StopSys()
 {
     std::string  res("Passed");
     sim_control_.Stop();
@@ -132,7 +132,7 @@ std::string Cpy5Gstub::StopSys()
 }
 
 
-list Cpy5Gstub::GetMemAreasNames()
+list CPyStub::GetMemAreasNames()
 {
 	list res;
 	uint32_t i;
@@ -145,7 +145,7 @@ list Cpy5Gstub::GetMemAreasNames()
 	return res;
 }
 
-list Cpy5Gstub::GetMemAreasSizes()
+list CPyStub::GetMemAreasSizes()
 {
 	list res;
 	uint32_t i;
@@ -159,7 +159,7 @@ list Cpy5Gstub::GetMemAreasSizes()
 
 
 
-list Cpy5Gstub::GetModulesNames()
+list CPyStub::GetModulesNames()
 {
 	list res;
 	uint32_t i;
@@ -172,7 +172,7 @@ list Cpy5Gstub::GetModulesNames()
 	return res;
 
 }
-std::string Cpy5Gstub::CallModule(std::string mod_name)
+std::string CPyStub::CallModule(std::string mod_name)
 {
 	uint32_t i;
 	std::string res("Passed");
@@ -187,7 +187,7 @@ std::string Cpy5Gstub::CallModule(std::string mod_name)
 	return "Wrong module name";
 }
 
-std::string Cpy5Gstub::StopModule(std::string mod_name)
+std::string CPyStub::StopModule(std::string mod_name)
 {
 	uint32_t i;
 	std::string res("Passed");
@@ -202,7 +202,7 @@ std::string Cpy5Gstub::StopModule(std::string mod_name)
 	return "Wrong module name";
 }
 
-CMemAccess*  Cpy5Gstub::GetMemArea(std::string name)
+CMemAccess*  CPyStub::GetMemArea(std::string name)
 {
 	uint32_t i;
 	for(i=0; i< num_areas_; i++)
@@ -216,7 +216,7 @@ CMemAccess*  Cpy5Gstub::GetMemArea(std::string name)
 	return NULL;
 }
 
-list Cpy5Gstub::GetProfileCnt()
+list CPyStub::GetProfileCnt()
 {
 	list res;
 	uint32_t i, num_grp = RTDBG_GetGrpNum();;
@@ -252,7 +252,7 @@ list Cpy5Gstub::GetProfileCnt()
 	return res;
 }
 
-list Cpy5Gstub::GetLogs()
+list CPyStub::GetLogs()
 {
 	list res;
 	std::vector<std::string> &logs_v = sim_control_.GetLastLogs();
@@ -265,31 +265,31 @@ list Cpy5Gstub::GetLogs()
 }
 
 
-std::string Cpy5Gstub::GetTime()
+std::string CPyStub::GetTime()
 {
 	std::string res;
 	return res;
 }
 
-std::string Cpy5Gstub::Run(uint32_t usecs)
+std::string CPyStub::Run(uint32_t usecs)
 {
 	sim_control_.Start(usecs/1000, usecs%1000);
 	return "Passed";
 }
 
-std::string Cpy5Gstub::Restart()
+std::string CPyStub::Restart()
 {
 	std::string res("Passed");
 	sim_control_.RestartHot();
 	return res;
 }
 
-std::string Cpy5Gstub::Version()
+std::string CPyStub::Version()
 {
 	std::string res(VER_NAME_SHORT);
 	return res;
 }
-std::string Cpy5Gstub::RunTest(std::string mod_name, std::string TestPath)
+std::string CPyStub::RunTest(std::string mod_name, std::string TestPath)
 {
 	uint32_t i;
 	std::string res("Passed");
@@ -312,7 +312,7 @@ std::string Cpy5Gstub::RunTest(std::string mod_name, std::string TestPath)
 	return "Wrong module name";
 }
 
-std::string Cpy5Gstub::ConfigModule(std::string mod_name, uint32_t config_type, std::string TestPath)
+std::string CPyStub::ConfigModule(std::string mod_name, uint32_t config_type, std::string TestPath)
 {
     uint32_t i;
     std::string res("Passed");
@@ -334,7 +334,7 @@ std::string Cpy5Gstub::ConfigModule(std::string mod_name, uint32_t config_type, 
     return "Wrong module name";
 }
 
-std::string Cpy5Gstub::SetSeverity(uint32_t prio)
+std::string CPyStub::SetSeverity(uint32_t prio)
 {
 
     if(prio <= E_INFO)
@@ -351,7 +351,7 @@ std::string Cpy5Gstub::SetSeverity(uint32_t prio)
 }
 
 
-Cpy5Gstub sim5g[NUM_OBJECTS];
+CPyStub sim5g[NUM_OBJECTS];
 //API function to connect with ITarget API
 //extern "C" uint32_t IGetConnectAPI(void **target_ptr)
 //{

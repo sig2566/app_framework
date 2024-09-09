@@ -6,7 +6,7 @@
 #ifndef RU_SYS_API_PHY_VERSION_H_
 #define RU_SYS_API_PHY_VERSION_H_
 
-#define VER_LABEL "5G_PHY_DU"
+#define VER_LABEL "AI code framework"
 #define VER_MAJOR "0"
 #define VER_MINOR "0"
 #define VER_RELEASE "2"

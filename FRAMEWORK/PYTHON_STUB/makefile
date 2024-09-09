@@ -1,6 +1,6 @@
  
 # compile mesh classes
-NAME = py5Gstub
+NAME = PyStub
 ROOT = ../../FRAMEWORK
 BOOST_INC := /usr/include/boost/
 BOOST_LIB = /usr/lib/x86_64-linux-gnu/
