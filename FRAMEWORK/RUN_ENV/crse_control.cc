@@ -46,7 +46,7 @@ EResultT CRSE_Control::IColdStart()
 	return E_OK;
 }
 
-EResultT CRSE_Control::IInit(IGL_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info)
+EResultT CRSE_Control::IInit(IRSE_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info)
 {
 //	char modname[80] = "./SAMPLE_MODULE.so";
 	char default_cnf_file[] = "sysconfig.xml";
@@ -59,7 +59,7 @@ EResultT CRSE_Control::IInit(IGL_ControlCallBackAPI *control_callback_ptr, const
 	IModuleControlAPI *mod_ptr = NULL;
 	std::string config_str = "";
 	//Define profiler and logs of this module
-	top_services_.Init(static_cast<IGL_DebugAPI *>(this));
+	top_services_.Init(static_cast<IRSE_DebugAPI *>(this));
 	top_services_.AddModule(mod_name_, NULL, config_str);
 	prof_cnt_gen_.Init(mod_name_, prof_cnt_name);
 	prof_timer_.Init(mod_name_, prof_ev_timer_);
@@ -81,7 +81,7 @@ EResultT CRSE_Control::IInit(IGL_ControlCallBackAPI *control_callback_ptr, const
 //	istream is(cfg_file);
     ptree pt;
     read_xml(cfg_file, pt);
-	BOOST_FOREACH( boost::property_tree::ptree::value_type const& v, pt.get_child("components_list") ) 
+	BOOST_FOREACH( boost::property_tree::ptree::value_type const& v, pt.get_child("components_list") )
 	{
 		if( v.first == "component" )
 		{
@@ -248,7 +248,7 @@ EResultT CRSE_Control::IConfigure(uint32_t id, void *in, void **out)
 	return E_OK;
 }
 
-EResultT CRSE_Control::IGetInfo(char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info)
+EResultT CRSE_Control::IGetInfo(const char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info)
 {
 	return E_OK;
 }
@@ -270,7 +270,7 @@ EResultT CRSE_Control::IFAPI_evt_get(void** fapi_evt_p)
 	return E_OK;
 }
 
-EResultT CRSE_Control::IDebugInit(char* add_info)
+EResultT CRSE_Control::IDebugInit(const char* add_info)
 {
 	return E_OK;
 }
@@ -316,12 +316,12 @@ CMemArea**	CRSE_Control::IGetLogData(uint32_t *nuentries_)
 	return logs_areas_;
 }
 
-EResultT CRSE_Control::IProfilerSave(char* file_name)
+EResultT CRSE_Control::IProfilerSave(const char* file_name)
 {
 	return E_OK;
 }
 
-EResultT CRSE_Control::ITraceSave(char* file_name)
+EResultT CRSE_Control::ITraceSave(const char* file_name)
 {
 	return E_OK;
 }
@@ -354,7 +354,7 @@ EResultT CRSE_Control::IClearBP(uint32_t id)
 	return E_OK;
 }
 
-EResultT CRSE_Control::ISendCLI(char* command_str, char **respond)
+EResultT CRSE_Control::ISendCLI(const char* command_str, char **respond)
 {
 	return E_OK;
 }

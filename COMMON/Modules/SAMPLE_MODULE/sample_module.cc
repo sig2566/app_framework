@@ -38,7 +38,8 @@ EResultT CModuleControl::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget 
 }
 EResultT CModuleControl::IColdStart()
 	{
-		char mod_name[]= "TEST_MODULE";
+		const char mod_name[]= "TEST_MODULE";
+		const char const_mod_name[] = "CONST_DATA";
 
 		// Example connection with memory areas
 		MEMAREA_CONNECT("TEST_MEM_AREA_2", &out_ptr, E_READ);	// out_ptr -> TEST_MEM_AREA_2, used for data read
@@ -49,6 +50,8 @@ EResultT CModuleControl::IColdStart()
 
 		//Example of getting pointer to other component API
 		ASSERT(callback_ptr_->IGetModule(mod_name, &test_module_p_) == E_OK);
+		ASSERT(callback_ptr_->IGetModule(const_mod_name, &const_data_module_p_) == E_OK);
+
 		
 		return E_OK;
 	}
@@ -166,14 +169,17 @@ CModuleControl::CModuleControl(const char *mod_name)
 		target_ptr_ = NULL;
 		strncpy(mod_name_, mod_name, MDO_NAME_SIZE);
 		/*********************************************************************************/
-
 		//Optional code
+
+		const_api_p_ = NULL;
+		const_data_module_p_ = NULL;
 		in_ptr = NULL;
 		out_ptr = NULL;
 		test_module_p_ = NULL;
 		mem_pool_ = NULL;
 		job_req_ = NULL;
 		job_rsp_ = NULL;
+
 
 	}
 

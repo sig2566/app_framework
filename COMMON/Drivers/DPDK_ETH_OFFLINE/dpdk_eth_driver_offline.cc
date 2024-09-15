@@ -1799,7 +1799,7 @@ void CDPDK_Eth_driver::Init(IModuleControlCallBackAPI* ptr,
 	m_frontend_check_test_out_ = m_frontend_check_test_out;
 	first_packet_=true;
 	//Take an instance of DPDK Buffer Manager (for further mempool allocation and being able to allocate mbufs from it)
-	char dpdk_buffer_manager_mod_name[]= "DPDK_BUFFER_MANAGER_OFFLINE";
+	const char dpdk_buffer_manager_mod_name[]= "DPDK_BUFFER_MANAGER_OFFLINE";
 	ASSERT(callback_ptr_->IGetModule(dpdk_buffer_manager_mod_name, &m_dpdk_buffer_manager_p_) == E_OK);
 	void *buffer_manager_api;
 	m_dpdk_buffer_manager_p_->IConfigure(e_GET_API, NULL, &buffer_manager_api);

@@ -13,11 +13,11 @@
 #include <string>
 using namespace ai_framework_proj;
 
-class CSimControl : public IGL_ControlCallBackAPI
+class CSimControl : public IRSE_ControlCallBackAPI
 {
 	ITarget    		*target_ptr_;
-	IGL_ControlAPI  *control_ptr_;
-	IGL_DebugAPI	*debug_ptr_;
+	IRSE_ControlAPI  *control_ptr_;
+	IRSE_DebugAPI	*debug_ptr_;
 	CMemArea		*mem_areas_p_[MAX_AREAS];
 	CModuleInfo		modules_[MAX_MODULES];
 	uint32_t 			num_modules_;

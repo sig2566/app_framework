@@ -22,7 +22,7 @@ class CRSE_Control;
  *@brief Every 5G module is connected with corresponding object. 
  *********************************************************************************************/
 class CModuleControlCallBack: public ai_framework_proj::IModuleControlCallBackAPI {
-	IGL_DebugAPI *main_class_ptr_;
+	IRSE_DebugAPI *main_class_ptr_;
 	//Profiler counters support
 	CMemAreaP 	     prof_cnt_tab_[MAX_PROFILE_CNT];
 	CProfileCnt     *prof_cnt_q_head_;
@@ -47,13 +47,13 @@ public:
 	EResultT ILogData(ESeverityT severity, char *str);
 	EResultT ITraceData(uint32_t id, uint32_t line_num, uint64_t val0= 0, uint64_t val1=0, uint64_t val2=0, uint64_t val3=0) ;
 	EResultT IStopRequest(ESeverityT severity);
-	EResultT IGetModule(char mod_name[], IModuleControlAPI **mod_ptr);
+	EResultT IGetModule(const char mod_name[], IModuleControlAPI **mod_ptr);
 	EResultT IMemAreaMount(CMemAreaP *mearea_ptr_, char area_name[], EAccessT ac_type);
 	EResultT IDelay_us(uint32_t usecs);
-	EResultT IAllocateEventCnt(char *cnt_name, volatile int64_t **cnt_ptr);
+	EResultT IAllocateEventCnt(const char *cnt_name, volatile int64_t **cnt_ptr);
 	EResultT ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data);
 
-	void Init(IGL_DebugAPI *ptr)
+	void Init(IRSE_DebugAPI *ptr)
 	{
 		main_class_ptr_ = ptr;
 		module_info_.Init();

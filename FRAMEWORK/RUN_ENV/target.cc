@@ -10,9 +10,9 @@
 EResultT CTarget::IGetTarget(EInterfaceT api_type, uint32_t id, void **gl_api_ptr)
 {
 	if(api_type == E_CONTROL_API)
-		*gl_api_ptr =(void*)static_cast<IGL_ControlAPI*>(&rse_control_);
+		*gl_api_ptr =(void*)static_cast<IRSE_ControlAPI*>(&rse_control_);
 	else
-		*gl_api_ptr =(void*)static_cast<IGL_DebugAPI*>(&rse_control_);
+		*gl_api_ptr =(void*)static_cast<IRSE_DebugAPI*>(&rse_control_);
 	return E_OK;
 }
 

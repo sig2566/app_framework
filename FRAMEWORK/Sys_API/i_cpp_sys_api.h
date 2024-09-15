@@ -144,7 +144,7 @@ namespace ai_framework_proj
 #endif
 
 	class ITarget;
-	class IGL_ControlAPI;
+	class RSE_ControlAPI;
 	class IModuleControlAPI;
 	class CProfileCnt;
 
@@ -534,10 +534,10 @@ namespace ai_framework_proj
 		virtual EResultT ILogData(ESeverityT severity, char *str) = 0;
 		virtual EResultT ITraceData(uint32_t id, uint32_t line_num, uint64_t val0= 0, uint64_t val1=0, uint64_t val2=0, uint64_t val3=0) = 0;
 		virtual EResultT IStopRequest(ESeverityT severity) = 0;
-		virtual EResultT IGetModule(char mod_name[], IModuleControlAPI **mod_ptr) = 0;
+		virtual EResultT IGetModule(const char mod_name[], IModuleControlAPI **mod_ptr) = 0;
 		virtual EResultT IMemAreaMount(CMemAreaP *mearea_ptr_, char area_name[], EAccessT ac_type) = 0;
 		virtual EResultT IDelay_us(uint32_t usecs)= 0;
-		virtual EResultT IAllocateEventCnt(char *cnt_name, volatile int64_t **cnt_ptr)= 0;
+		virtual EResultT IAllocateEventCnt(const char *cnt_name, volatile int64_t **cnt_ptr)= 0;
 		virtual EResultT ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data) = 0;
 	};
 
@@ -561,11 +561,11 @@ namespace ai_framework_proj
 
 	//Front End APIs
 	/*******************************************************************************************//*!
-	*@class IGL_ControlCallBackAPI
+	*@class RSE_ControlCallBackAPI
 	*@brief The purpose of this class is :
 	*@brief API RSE callback API
 	***********************************************************************************************/
-	class IGL_ControlCallBackAPI
+	class IRSE_ControlCallBackAPI
 	{
 	public:
 		virtual EResultT IStopRequest(ESeverityT severity) = 0;
@@ -573,25 +573,25 @@ namespace ai_framework_proj
 	};
 
 	/*******************************************************************************************//*!
-	*@class IGL_DebugAPI
+	*@class IRSE_DebugAPI
 	*@brief The purpose of this class is :
 	*@brief Debugger API to the running support component. That API allows the system debugging from
 	*@brief the externas application (front end).
 	***********************************************************************************************/
-	class IGL_DebugAPI	{
+	class IRSE_DebugAPI	{
 	public:
-		virtual EResultT  	IDebugInit(char* add_info) = 0;
+		virtual EResultT  	IDebugInit(const char* add_info) = 0;
 		virtual EResultT  	IGetMemAreasNum(uint32_t *areas_num) = 0;
 		virtual CMemArea*  	IGetMemArea(uint32_t area_num) = 0;
 		virtual EResultT 	IGetModulesNum(uint32_t *modules_num) = 0;
 		virtual CModuleInfo IGetModule(uint32_t module_num) = 0;
 		virtual EResultT 	ISetLogSeverity(ESeverityT severity) = 0;
-		virtual EResultT 	IProfilerSave(char* file_name) = 0;
-		virtual EResultT 	ITraceSave(char* file_name) = 0;
+		virtual EResultT 	IProfilerSave(const char* file_name) = 0;
+		virtual EResultT 	ITraceSave(const char* file_name) = 0;
 		virtual EResultT 	ICall(uint32_t param) = 0;
 		virtual EResultT 	ISetBP(const char *data, uint32_t *id) = 0;
 		virtual EResultT 	IClearBP(uint32_t id) = 0;
-		virtual EResultT 	ISendCLI(char* command_str, char **respond) = 0;
+		virtual EResultT 	ISendCLI(const char* command_str, char **respond) = 0;
 		virtual CMemArea** 	IGetProfilingData(uint32_t *nuentries_)= 0;
 		virtual CMemArea**	IGetLogData(uint32_t *nuentries_) = 0;
 		virtual void 		Delay_us(uint32_t usecs) = 0;
@@ -601,20 +601,20 @@ namespace ai_framework_proj
 
 
 	/*******************************************************************************************//*!
-	*@class IGL_ControlAPI
+	*@class IRSE_ControlAPI
 	*@brief The purpose of this class is :
 	*@brief Running and control 5G enodev using external program (front end)
 	***********************************************************************************************/
-	class IGL_ControlAPI
+	class IRSE_ControlAPI
 	{
 	public:
-		virtual EResultT IInit(	IGL_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info) = 0;
+		virtual EResultT IInit(	IRSE_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info) = 0;
 		virtual EResultT IColdStart() = 0;
 		virtual EResultT IWarmStart() = 0;
 		virtual EResultT IHotStart() = 0;
 		virtual EResultT IStop(ESeverityT severity) = 0;
 		virtual EResultT IConfigure(uint32_t id, void *in, void **out) = 0;
-		virtual EResultT IGetInfo(char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info) = 0;
+		virtual EResultT IGetInfo(const char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info) = 0;
 		virtual EResultT IExitReq(ESeverityT severity) = 0;
 		//If fapi_req_p==NULL than there is not other requests in this TTI
 		virtual EResultT IFAPI_req_put(void* fapi_req_p) = 0;

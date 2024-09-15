@@ -100,7 +100,7 @@ lib : $(OBJECTS_CPP) $(OBJECTS_C)
 	@echo $(CPATH)
 	@echo $(OBJECTS_CPP) $(OBJECTS_C)
 	@test -d $(BIN) || mkdir -p $(BIN) 
-	$(LINK_TOOL) $(OBJECTS_CPP) $(OBJECTS_C) $(LIB_SO)  $(BUILD_TARGET)
+	$(LINK_TOOL) $(DEBFLAGS) $(OBJECTS_CPP) $(OBJECTS_C) $(LIB_SO)  $(BUILD_TARGET)
  
 $(OBJECTS_CPP): $(SRC_CPP) $(SRC_H) $(SRC_INC)
 	@echo $(SRC_CPP) $(INCLUDE_FLAGS) 

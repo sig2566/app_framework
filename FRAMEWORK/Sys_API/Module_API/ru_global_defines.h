@@ -57,10 +57,10 @@
 
 typedef enum       
 {
-    TIMING_MODE_TIMER,                          // run according timers (in this mode the GL_test is not running)
-    TIMING_MODE_GL_TEST,                        // run according GL Test (in this mode the GL_test and timers are running but operation is set according GL_Test)
-}TIMER_GL_TEST_MODE_T;
-#define 	TIMING_MODE					TIMING_MODE_GL_TEST
+    TIMING_MODE_TIMER,                          // run according timers (in this mode the RSE_test is not running)
+    TIMING_MODE_RSE_TEST,                        // run according GL Test (in this mode the RSE_test and timers are running but operation is set according RSE_Test)
+}TIMER_RSE_TEST_MODE_T;
+#define 	TIMING_MODE					TIMING_MODE_RSE_TEST
 														
 #define		SYMBOL_TIMER_OFFSET					0
 #define		BF_START_TIMER_OFFSET				0.66
@@ -68,7 +68,7 @@ typedef enum
 
 typedef enum       
 {
-    e_CALL_TIMER_FROM_GL_TEST,
+    e_CALL_TIMER_FROM_RSE_TEST,
     e_CALL_TIMER_FROM_TIMERS
 }CALL_TIMER_T;
 
@@ -77,7 +77,7 @@ enum TimeEvent
 	tSLOT = 0,
 	tSYMB = 1
 };
-#define     CALL_TIMER                          e_CALL_TIMER_FROM_GL_TEST
+#define     CALL_TIMER                          e_CALL_TIMER_FROM_RSE_TEST
 
 
 //	This enum describes the data engine type: PreEqualizer \ Beamforming

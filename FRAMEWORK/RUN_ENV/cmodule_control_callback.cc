@@ -37,9 +37,9 @@ EResultT CModuleControlCallBack::IRegistryTraceEntry(char *format_str, uint32_t 
 	return E_OK;
 }
 
-EResultT CModuleControlCallBack::IAllocateEventCnt(char *cnt_name, volatile int64_t **cnt_ptr)
+EResultT CModuleControlCallBack::IAllocateEventCnt(const char *cnt_name, volatile int64_t **cnt_ptr)
 {
-	*cnt_ptr = RTDBG_AllocCounter(rt_debug_grp_, cnt_name);
+	*cnt_ptr = RTDBG_AllocCounter(rt_debug_grp_, (char*)cnt_name);
 	return E_OK;
 }
 
@@ -118,7 +118,7 @@ CModuleInfo* CModuleControlCallBack::GetModuleInfo()
 	return &module_info_;
 }
 
-EResultT CModuleControlCallBack::IGetModule(char mod_name[], IModuleControlAPI **mod_ptr)
+EResultT CModuleControlCallBack::IGetModule(const char mod_name[], IModuleControlAPI **mod_ptr)
 {
 	uint32_t numodules_;
 	uint32_t i;

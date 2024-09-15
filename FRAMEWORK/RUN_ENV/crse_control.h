@@ -34,9 +34,9 @@ using boost::property_tree::ptree;
  *@brief This class is responsible for connect with user frontend and to 5G modules. 
  *@brief The class support control and debug services for running 5G PHY. 
  */ 
-class CRSE_Control : public IGL_ControlAPI, public IGL_DebugAPI
+class CRSE_Control : public IRSE_ControlAPI, public IRSE_DebugAPI
 {
-	IGL_ControlCallBackAPI  *control_callback_;
+	IRSE_ControlCallBackAPI  *control_callback_;
 	CMemArea				mem_areas_[MAX_AREAS];
 	// table for the permanent timers event (every 10usec)
 	CModuleControlCallBack	modules_[MAX_MODULES];
@@ -68,33 +68,33 @@ public:
 
 	CRSE_Control();
 	virtual ~CRSE_Control();
-	//IGL_ControlAPI methods
-	virtual EResultT IInit(	IGL_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info);
+	//RSE_ControlAPI methods
+	virtual EResultT IInit(	IRSE_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info);
 	virtual EResultT IColdStart() ;
 	virtual EResultT IWarmStart() ;
 	virtual EResultT IHotStart() ;
 	virtual EResultT IStop(ESeverityT severity);
 	virtual EResultT IConfigure(uint32_t id, void *in, void **out);
-	virtual EResultT IGetInfo(char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info);
+	virtual EResultT IGetInfo(const char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info);
 	virtual EResultT IExitReq(ESeverityT severity);
 	//If fapi_req_p==NULL than there is not other requests in this TTI
 	virtual EResultT IFAPI_req_put(void* fapi_req_p);
 	//fapi_evt_p == NULL means no events.
 	virtual EResultT IFAPI_evt_get(void** fapi_evt_p);
 
-	// IGL_DebugAPI methods
-	virtual EResultT IDebugInit(char* add_info);
+	// IRSE_DebugAPI methods
+	virtual EResultT IDebugInit(const char* add_info);
 	virtual EResultT IGetMemAreasNum(uint32_t *areas_num);
 	virtual CMemArea *IGetMemArea(uint32_t area_num);
 	virtual EResultT IGetModulesNum(uint32_t *modules_num);
 	virtual CModuleInfo IGetModule(uint32_t module_num);
 	virtual EResultT ISetLogSeverity(ESeverityT severity);
-	virtual EResultT IProfilerSave(char* file_name) ;
-	virtual EResultT ITraceSave(char* file_name);
+	virtual EResultT IProfilerSave(const char* file_name) ;
+	virtual EResultT ITraceSave(const char* file_name);
 	virtual EResultT ICall(uint32_t param);
 	virtual EResultT ISetBP(const char *data, uint32_t *id) ;
 	virtual EResultT IClearBP(uint32_t id);
-	virtual EResultT ISendCLI(char* command_str, char **respond);
+	virtual EResultT ISendCLI(const char* command_str, char **respond);
 	virtual CMemArea** 	IGetProfilingData(uint32_t *nuentries_);
 	virtual CMemArea**	IGetLogData(uint32_t *nuentries_);
 
@@ -119,7 +119,7 @@ public:
 		prof_cnt_num_=0;
 		prof_cnt_num_=0;
 		for(i=0; i< MAX_MODULES; i++)
-			modules_[i].Init(static_cast<IGL_DebugAPI *>(this));
+			modules_[i].Init(static_cast<IRSE_DebugAPI *>(this));
 		SetTimer();
 		//Default setting for numerology 1;
 	}
