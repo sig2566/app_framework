@@ -31,7 +31,7 @@ class CConstData     *g_module_ptr = NULL;
 
 
 //API function to connect with ITarget API
-extern "C" uint32_t IGetConnectAPI(void **target_ptr)
+extern "C" uint32_t API_CONNECT_FUNC(void **target_ptr)
 {
 	g_module_ptr = new CConstData();
 	*target_ptr= static_cast<IModuleControlAPI*>(g_module_ptr);

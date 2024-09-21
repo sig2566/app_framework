@@ -23,7 +23,7 @@ static void *(start_frame_work_thread)(void *arg)
 
 CRSE_Control::CRSE_Control() {
 	// TODO Auto-generated constructor stub
-	char mod_name[] = "GLUE";
+	char mod_name[] = "RUN_ENV.so";
 	//DataReset();
 	strcpy(mod_name_, mod_name);
 	callback_ptr_= static_cast<IModuleControlCallBackAPI*>(&top_services_);
@@ -48,7 +48,6 @@ EResultT CRSE_Control::IColdStart()
 
 EResultT CRSE_Control::IInit(IRSE_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info)
 {
-//	char modname[80] = "./SAMPLE_MODULE.so";
 	char default_cnf_file[] = "sysconfig.xml";
 	char prof_cnt_name[]= "GEN";
 	char prof_ev_timer_[] = "EV_TIMER";
@@ -58,16 +57,10 @@ EResultT CRSE_Control::IInit(IRSE_ControlCallBackAPI *control_callback_ptr, cons
 	uint32_t index = -1;
 	IModuleControlAPI *mod_ptr = NULL;
 	std::string config_str = "";
-	//Define profiler and logs of this module
-	top_services_.Init(static_cast<IRSE_DebugAPI *>(this));
-	top_services_.AddModule(mod_name_, NULL, config_str);
-	prof_cnt_gen_.Init(mod_name_, prof_cnt_name);
-	prof_timer_.Init(mod_name_, prof_ev_timer_);
 
 
 	//Timer initialization
 	DataReset();
-	OSA_spinlock_create(&timer_lock_);
 
 	//Add external modules from xlm list file
 	if(config_file[0]!=0)
@@ -79,8 +72,21 @@ EResultT CRSE_Control::IInit(IRSE_ControlCallBackAPI *control_callback_ptr, cons
 		cfg_file = default_cnf_file;
 	}
 //	istream is(cfg_file);
-    ptree pt;
-    read_xml(cfg_file, pt);
+	ptree pt;
+	read_xml(cfg_file, pt);
+	string rt_data_file = pt.get<string>("shared_debug_file", "rt_debug.dat");
+    RTDBG_SetSharedMemFile(rt_data_file.c_str());
+    RTDBG_ActivateDebugDataCollection();
+    RTDBG_Start();
+
+    //Define profiler and logs of this module
+	top_services_.Init(static_cast<IRSE_DebugAPI *>(this));
+	top_services_.AddModule(mod_name_, NULL, config_str);
+	prof_cnt_gen_.Init(mod_name_, prof_cnt_name);
+	prof_timer_.Init(mod_name_, prof_ev_timer_);
+
+
+
 	BOOST_FOREACH( boost::property_tree::ptree::value_type const& v, pt.get_child("components_list") )
 	{
 		if( v.first == "component" )
@@ -119,7 +125,9 @@ EResultT CRSE_Control::IInit(IRSE_ControlCallBackAPI *control_callback_ptr, cons
 
 			// reset errors
 			dlerror();
-			get_connect_api = (IGetConnectAPI_t)dlsym(handle, "IGetConnectAPI");
+			char entry_func_name[200];
+			sprintf(entry_func_name,"%s_IGetConnectAPI", modname.c_str());
+			get_connect_api = (IGetConnectAPI_t)dlsym(handle, entry_func_name);
 			char *dlsyerror_ = dlerror();
 			if (dlsyerror_) {
 				printf( "Cannot load symbol IGetConnectAPI: %s\n", dlsyerror_);

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<shared_debug_file>shared_debug.dat</shared_debug_file>
 <components_list>
   <component>
     <name>SAMPLE_MODULE</name>

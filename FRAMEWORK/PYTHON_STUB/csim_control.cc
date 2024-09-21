@@ -41,6 +41,48 @@ void CSimControl::Init(const char *cfg_path)
 	EResultT res;
 	uint32_t i;
 
+	char modname[80] = "./RUN_ENV.so";
+	IGetConnectAPI_t get_connect_api;
+	void *tmp_ptr = NULL;
+	uint32_t index = -1;
+
+	//TODO Loads modules due too sysconfig.xml file
+	dlerror();
+	void* handle = dlopen(modname, RTLD_LAZY);
+    if (!handle) {
+		char buf[GEN_BUF_SIZE];
+		sprintf(buf,"%s",dlerror());
+		printf("Error load module %s : %s\n",modname, buf);
+    	ASSERT(0);
+    }
+    num_areas_ = 0;
+    // reset errors
+    dlerror();
+    get_connect_api = (IGetConnectAPI_t)dlsym(handle, "IGetConnectAPI");
+    const char *dlsyerror_ = dlerror();
+    if (dlsyerror_) {
+    	//TODO add errror indication,
+         dlclose(handle);
+
+    }
+
+    get_connect_api(&tmp_ptr);
+
+    if(tmp_ptr == NULL)
+    {
+    	ASSERT(0);
+    }
+    target_ptr_ = reinterpret_cast<ITarget*>(tmp_ptr);
+	target_ptr_->IGetTarget(E_CONTROL_API, 0,  &tmp_ptr);
+	control_ptr_ = (IRSE_ControlAPI*)tmp_ptr;
+	ASSERT(control_ptr_);
+
+	target_ptr_->IGetTarget(E_DEBUG_API, 0,  &tmp_ptr);
+	debug_ptr_ = (IRSE_DebugAPI*)tmp_ptr;
+	ASSERT(debug_ptr_);
+	//char *tmp_str= cfg_path;
+	res = control_ptr_->IInit(reinterpret_cast<IRSE_ControlCallBackAPI*>(this), cfg_path, NULL);
+	ASSERT(res == E_OK);
 
 	//Get shared memory areas and modules access for debugging
 	res = debug_ptr_->IGetMemAreasNum(&num_areas_);

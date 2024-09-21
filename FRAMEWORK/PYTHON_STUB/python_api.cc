@@ -149,7 +149,7 @@ std::string GetCurrentCell()
 //**********************************************************************************
 std::string SetDebugRT(std::string rt_debug_file)
 {
-	RTDBG_SetSharedMemFile((char*)rt_debug_file.data());
+	RTDBG_SetSharedMemFile(rt_debug_file.data());
     return "SetDebugRT" + sim5g[curr_cell].SetFileOut(rt_debug_file);
 }
 

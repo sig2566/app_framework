@@ -33,7 +33,7 @@ std::string CPyStub::SetFileOut(std::string name)
 	if(name.size() != 0)
 	{
 		debug_data_file_name_ = name;
-		RTDBG_SetSharedMemFile((char*)debug_data_file_name_.data());
+		RTDBG_SetSharedMemFile(debug_data_file_name_.data());
 	}
 	else {
 		debug_data_file_name_.clear();

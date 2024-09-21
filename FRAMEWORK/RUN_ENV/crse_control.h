@@ -61,7 +61,6 @@ class CRSE_Control : public IRSE_ControlAPI, public IRSE_DebugAPI
 
 	OSA_thread_t            main_thread_;
 	OSA_mutex_t             sync_mutex_;
-	OSA_spinlock_t 		   timer_lock_;
 
 
 public:
@@ -69,7 +68,7 @@ public:
 	CRSE_Control();
 	virtual ~CRSE_Control();
 	//RSE_ControlAPI methods
-	virtual EResultT IInit(	IRSE_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info);
+	virtual EResultT IInit (IRSE_ControlCallBackAPI *control_callback_ptr, const char* config_file, char* add_info);
 	virtual EResultT IColdStart() ;
 	virtual EResultT IWarmStart() ;
 	virtual EResultT IHotStart() ;
