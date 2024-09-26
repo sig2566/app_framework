@@ -44,8 +44,8 @@ class ThreadFactory : public CBaseModule
     uint64_t alloc_thread_mask_;
     char eal_init_cmd_[GEN_BUF_SIZE];
  public:
-    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api);
-    EResultT IConfigure(uint32_t id, void *in, void **out);
+    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
+    EResultT IConfigure(EConfigId id, void *in, void **out);
     EResultT IWarmStart();
     EResultT IHotStart();
     EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info);

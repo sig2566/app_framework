@@ -115,8 +115,8 @@ class CClassifyFactory : public CBaseModule
     CDPDK_Classify dpdk_classify_[MAX_CLASSIFY_DRIVERS];
     uint32_t num_classify_drivers_;
      public:
-    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api);
-    EResultT IConfigure(uint32_t id, void *in, void **out);
+    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
+    EResultT IConfigure(EConfigId id, void *in, void **out);
     EResultT IColdStart();
     CClassifyFactory()
     {

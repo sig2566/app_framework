@@ -83,11 +83,7 @@ namespace ai_framework_proj
 	    e_GET_API,
 		e_GET_TEST_MODULE_API,
 	    e_TEST_CONFIG,
-	    e_START_TCP_SRV,
-	    e_TCP_CONNECT,
-	    e_PUSCH_SLOT_API,
-	    e_PDSCH_SLOT_API,
-		e_PUT_INIT_DATA
+l,		e_PUT_INIT_DATA
 	};
 
 	enum EMemAllocBit
@@ -549,13 +545,15 @@ namespace ai_framework_proj
 	class IModuleControlAPI
 	{
 	public:
-		virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api) = 0;
+		//Module initialization. It gets the following parameters:
+		//pointer to IModuleControlCallBackAPI callback_ptr.
+		virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info) = 0;
 		virtual EResultT IColdStart() = 0;
 		virtual EResultT IWarmStart() = 0;
 		virtual EResultT IHotStart() = 0;
 		virtual EResultT IStop(ESeverityT severity) = 0;
 		virtual EResultT ICall(uint32_t param) = 0;
-		virtual EResultT IConfigure(uint32_t id, void *in, void **out) = 0;
+		virtual EResultT IConfigure(EConfigId id, void *in, void **out) = 0;
 		virtual EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info) = 0;
 	};
 
@@ -613,13 +611,9 @@ namespace ai_framework_proj
 		virtual EResultT IWarmStart() = 0;
 		virtual EResultT IHotStart() = 0;
 		virtual EResultT IStop(ESeverityT severity) = 0;
-		virtual EResultT IConfigure(uint32_t id, void *in, void **out) = 0;
+		virtual EResultT IConfigure(EConfigId id, void *in, void **out) = 0;
 		virtual EResultT IGetInfo(const char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info) = 0;
 		virtual EResultT IExitReq(ESeverityT severity) = 0;
-		//If fapi_req_p==NULL than there is not other requests in this TTI
-		virtual EResultT IFAPI_req_put(void* fapi_req_p) = 0;
-		//fapi_evt_p == NULL means no events.
-		virtual EResultT IFAPI_evt_get(void** fapi_evt_p) = 0;
 	};
 
 	//General factory API

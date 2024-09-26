@@ -153,21 +153,19 @@ EResultT CRSE_Control::IInit(IRSE_ControlCallBackAPI *control_callback_ptr, cons
 		uint32_t major, minor, build_num;
 		char mod_name[GEN_BUF_SIZE+1];
 		strncpy(mod_name, modules_[i].module_info_.module_name_, GEN_BUF_SIZE);
-		char *str_tmp= new char[modules_[i].config_info_.size()+GEN_BUF_SIZE] ;
-		strcpy(str_tmp, modules_[i].config_info_.data());
+		char str_tmp[100];
 		modules_[i].module_info_.module_p_->IGetInfo(mod_name, &major, &minor, &build_num, str_tmp);
 		if(strcmp(modules_[i].module_info_.module_name_, mod_name)!= 0)
 		{
 			printf("Warning: module %s has wrong internal name: %s\n",
 					modules_[i].module_info_.module_name_,mod_name);
 		}
-		delete str_tmp;
 		LOG(E_HIGH,"Loaded module %s Ver: %d.%d build:%d date: %s",modules_[i].module_info_.module_name_, major, minor, build_num, str_tmp);
 	}
 	//Init module
 	for(i=0; i < num_modules_; i++)
 	{
-		modules_[i].module_info_.module_p_->IInit( static_cast<IModuleControlCallBackAPI*>(&modules_[i]) , static_cast<ITarget*>(Target_p_));
+		modules_[i].module_info_.module_p_->IInit( static_cast<IModuleControlCallBackAPI*>(&modules_[i]) , static_cast<ITarget*>(Target_p_), modules_[i].config_info_.data());
 	}
 
 	control_callback_ = control_callback_ptr;
@@ -250,7 +248,7 @@ EResultT CRSE_Control::IStop(ESeverityT severity)
 	return E_OK;
 }
 
-EResultT CRSE_Control::IConfigure(uint32_t id, void *in, void **out)
+EResultT CRSE_Control::IConfigure(EConfigId id, void *in, void **out)
 {
     //Configure scheduler due to numeroogy.
 	return E_OK;
@@ -262,18 +260,6 @@ EResultT CRSE_Control::IGetInfo(const char* module_name, uint32_t major_ver, uin
 }
 
 EResultT CRSE_Control::IExitReq(ESeverityT severity)
-{
-	return E_OK;
-}
-
-//If fapi_req_p==NULL than there is not other requests in this TTI
-EResultT CRSE_Control::IFAPI_req_put(void* fapi_req_p)
-{
-	return E_OK;
-}
-
-//fapi_evt_p == NULL means no events.
-EResultT CRSE_Control::IFAPI_evt_get(void** fapi_evt_p)
 {
 	return E_OK;
 }

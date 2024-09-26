@@ -9,14 +9,14 @@
 #include "const_data.h"
 
 
-EResultT CConstData::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+EResultT CConstData::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
 
-	CBaseModule::IInit(callback_ptr, target_api);
+	CBaseModule::IInit(callback_ptr, target_api, init_info);
 
     return E_OK;
 }
-EResultT CConstData::IConfigure(uint32_t id, void *in, void **out)
+EResultT CConstData::IConfigure(EConfigId id, void *in, void **out)
 {
     *out = (void*)(static_cast<CConst_Data_api*>(this));
 	return E_OK;

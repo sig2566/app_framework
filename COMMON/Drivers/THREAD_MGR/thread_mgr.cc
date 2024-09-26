@@ -15,7 +15,7 @@
 
 //
 #define MAX_EXTRA_ARGS 32
-EResultT ThreadFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+EResultT ThreadFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
 	uint32_t i;
 	char *eargv[MAX_EXTRA_ARGS+1];
@@ -39,7 +39,7 @@ EResultT ThreadFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *
 	clock_gettime(CLOCK_MONOTONIC, &cur_time);
 	int64_t usec_diff2 = DiffBetweenTimespec(cur_time, prev_time)/1000;
 
-	CBaseModule::IInit(callback_ptr, target_api);
+	CBaseModule::IInit(callback_ptr, target_api, init_info);
     //Initialization of the profiler counter
 	INIT_PROF_CNT(THREAD_PROF, callback_ptr_, thread_prof_);
 
@@ -75,7 +75,7 @@ EResultT ThreadFactory::IGetInfo(char* module_name, uint32_t *major_ver, uint32_
 }
 
 
-EResultT ThreadFactory::IConfigure(uint32_t id, void *in, void **out)
+EResultT ThreadFactory::IConfigure(EConfigId id, void *in, void **out)
 {
 	if(id==e_PUT_INIT_DATA)
 	{

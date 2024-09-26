@@ -2043,10 +2043,10 @@ EResultT	CDPDK_Eth_driver::DpdkOfflineInitMempoolsSettings(buffer_manager_settin
 
 
 
-EResultT CCommDriverFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+EResultT CCommDriverFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
 
-	CBaseModule::IInit(callback_ptr, target_api);
+	CBaseModule::IInit(callback_ptr, target_api, init_info);
     //Example of initialization of the profiler counter
     char prof_name[] = "COMM";
     comm_prof_.Init(prof_name, callback_ptr); //INIT Profiler counter
@@ -2149,7 +2149,7 @@ EResultT CCommDriverFactory::IHotStart()
 }
 
 
-EResultT CCommDriverFactory::IConfigure(uint32_t id, void *in, void **out)
+EResultT CCommDriverFactory::IConfigure(EConfigId id, void *in, void **out)
 {
 	if(id==e_PUT_INIT_DATA)
 	{

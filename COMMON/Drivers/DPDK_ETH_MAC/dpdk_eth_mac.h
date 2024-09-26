@@ -64,8 +64,8 @@ class CDpdkEthMac : public CBaseModule
     CDPDK_Eth_Mac dpdk_eth_mac_[MAX_ETH_MAC];
     uint32_t num_eth_mac_;
  public:
-    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api);
-    EResultT IConfigure(uint32_t id, void *in, void **out);
+    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
+    EResultT IConfigure(EConfigId id, void *in, void **out);
     EResultT IColdStart();
     CDpdkEthMac()
     {

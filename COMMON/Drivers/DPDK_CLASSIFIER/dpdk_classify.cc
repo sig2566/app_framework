@@ -308,12 +308,12 @@ EResultT CDPDK_Classify::build()
 }
 
 //
-EResultT CClassifyFactory::IInit (IModuleControlCallBackAPI *callback_ptr, ITarget * target_api)
+EResultT CClassifyFactory::IInit (IModuleControlCallBackAPI *callback_ptr, ITarget * target_api, const char *init_info)
 {
     CBaseModule::IInit (callback_ptr, target_api);
     //Example of initialization of the profiler counter
     char prof_name[] = "CLASSIFY";
-    classify_prof_.Init (prof_name, callback_ptr);	//INIT Profiler counter
+    classify_prof_.Init (prof_name, callback_ptr, init_info);	//INIT Profiler counter
     LOG (E_MEDIUM, "init passed");
     return E_OK;
 }
@@ -323,7 +323,7 @@ EResultT CClassifyFactory::IColdStart ()
     return E_OK;
 }
 
-EResultT CClassifyFactory::IConfigure (uint32_t id, void *in, void **out)
+EResultT CClassifyFactory::IConfigure (EConfigId id, void *in, void **out)
 {
     char str[]= "Call passed";
     callback_ptr_->ILogData(E_LOW, str);

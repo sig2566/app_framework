@@ -8,7 +8,7 @@
 
 #include "sample_module.h"
 
-EResultT CModuleControl::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+EResultT CModuleControl::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
 
     /********************************************************************************************/
@@ -142,7 +142,7 @@ EResultT CModuleControl::ICall(uint32_t param)
 		}
 		return E_OK;
 	}
-EResultT CModuleControl::IConfigure(uint32_t id, void *in, void **out)
+EResultT CModuleControl::IConfigure(EConfigId id, void *in, void **out)
 	{
 		char str[]= "Call passed";
 		callback_ptr_->ILogData(E_LOW, str);

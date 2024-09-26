@@ -21,7 +21,7 @@ namespace ai_framework_proj
     class CBaseModule : public IModuleControlAPI
     {
     public:
-        virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+        virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
         {
 
             /********************************************************************************************/
@@ -53,7 +53,7 @@ namespace ai_framework_proj
             {
         		return E_OK;
             }
-        virtual EResultT IConfigure(uint32_t id, void *in, void **out)
+        virtual EResultT IConfigure(EConfigId id, void *in, void **out)
             {
                 return E_OK;
             }

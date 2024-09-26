@@ -95,8 +95,8 @@ class CDpdkBufManagerFactory : public CBaseModule
     CDPDK_Buffer_Manager	dpdk_buffer_managers_[MAX_BUFFER_MANAGERS];
     uint32_t 				num_buffer_managers_;
  public:
-    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api);
-    EResultT IConfigure(uint32_t id, void *in, void **out);
+    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
+    EResultT IConfigure(EConfigId id, void *in, void **out);
     EResultT IColdStart();
     CDpdkBufManagerFactory()
     {

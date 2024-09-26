@@ -230,10 +230,10 @@ void CDPDK_Buffer_Manager::Config(IModuleControlCallBackAPI* ptr, uint32_t manag
 
 
 //
-EResultT CDpdkBufManagerFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+EResultT CDpdkBufManagerFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
 
-	CBaseModule::IInit(callback_ptr, target_api);
+	CBaseModule::IInit(callback_ptr, target_api, init_info);
     LOG(E_MEDIUM,  "init passed");
 
 
@@ -267,7 +267,7 @@ EResultT CDpdkBufManagerFactory::IColdStart()
 		return E_OK;
 	}
 
-EResultT CDpdkBufManagerFactory::IConfigure(uint32_t id, void *in, void **out)
+EResultT CDpdkBufManagerFactory::IConfigure(EConfigId id, void *in, void **out)
 	{
 		num_buffer_managers_++;
 		ASSERT(num_buffer_managers_ < MAX_BUFFER_MANAGERS);

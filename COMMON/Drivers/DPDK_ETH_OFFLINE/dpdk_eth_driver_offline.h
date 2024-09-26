@@ -417,8 +417,8 @@ private:
     CProfileCnt dl_dpdk_send_prof_[2];
 
  public:
-    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api);
-    EResultT IConfigure(uint32_t id, void *in, void **out);
+    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
+    EResultT IConfigure(EConfigId id, void *in, void **out);
     EResultT IColdStart();
     EResultT IHotStart();
     EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info);

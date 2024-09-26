@@ -35,13 +35,13 @@ class CModuleControl : public IModuleControlAPI
     IModuleControlAPI  *const_data_module_p_;
     CConst_Data_api *const_api_p_;
 public:
-    virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api);
+    virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
     virtual EResultT IColdStart();
     virtual EResultT IWarmStart();
     virtual EResultT IHotStart();
     virtual EResultT IStop(ESeverityT severity);
     virtual EResultT ICall(uint32_t param);
-    virtual EResultT IConfigure(uint32_t id, void *in, void **out);
+    virtual EResultT IConfigure(EConfigId id, void *in, void **out);
     virtual EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info);
     CModuleControl(const char *mod_name);
 };

@@ -289,8 +289,8 @@ class CCommDriverFactory : public CBaseModule
     uint32_t num_ip_drivers_;
 
 public:
-    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api);
-    EResultT IConfigure(uint32_t id, void *in, void **out);
+    EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
+    EResultT IConfigure(EConfigId id, void *in, void **out);
     EResultT IColdStart();
     CCommDriverFactory()
     {

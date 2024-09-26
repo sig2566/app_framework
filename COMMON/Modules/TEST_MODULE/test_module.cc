@@ -16,7 +16,7 @@ class CModuleControl : public IModuleControlAPI
 	CMemArea *in_ptr, *out_ptr, *job_req_, *job_rsp_;
 	char mod_name_[MDO_NAME_SIZE];
 public:
-	virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+	virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 	{
 		EResultT res;
 		uint32_t inc_size= 100;
@@ -85,7 +85,7 @@ public:
 		}
 		return E_OK;
 	}
-	virtual EResultT IConfigure(uint32_t id, void *in, void **out)
+	virtual EResultT IConfigure(EConfigId id, void *in, void **out)
 	{
 		char str[]= "Call passed";
 		callback_ptr_->ILogData(E_LOW, str);

@@ -253,10 +253,10 @@ EResultT CDPDK_Eth_Mac::addEthHdr(struct rte_mbuf *pkt, const char *dst_mac, uin
 }
 
 //
-EResultT CDpdkEthMac::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+EResultT CDpdkEthMac::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
 
-	CBaseModule::IInit(callback_ptr, target_api);
+	CBaseModule::IInit(callback_ptr, target_api, init_info);
     LOG(E_MEDIUM,  "init passed");
 
     return E_OK;
@@ -267,7 +267,7 @@ EResultT CDpdkEthMac::IColdStart()
 		return E_OK;
 }
 
-EResultT CDpdkEthMac::IConfigure(uint32_t id, void *in, void **out)
+EResultT CDpdkEthMac::IConfigure(EConfigId id, void *in, void **out)
 {
     num_eth_mac_++;
     ASSERT (num_eth_mac_ < MAX_ETH_MAC);

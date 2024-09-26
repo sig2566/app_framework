@@ -323,7 +323,7 @@ std::string CPyStub::ConfigModule(std::string mod_name, uint32_t config_type, st
             EResultT out_res;
             void *ptr_out;
             char *ptr_in= (char*)TestPath.data();
-            out_res= modules_p_[i].module_p_->IConfigure(config_type, (void *)ptr_in, &ptr_out);
+            out_res= modules_p_[i].module_p_->IConfigure((EConfigId)config_type, (void *)ptr_in, &ptr_out);
             if(out_res == E_FAIL)
             {
                 res = "Failed";

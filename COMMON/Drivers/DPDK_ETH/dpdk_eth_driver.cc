@@ -536,9 +536,9 @@ EResultT CDPDK_Eth_driver::getPortIdByMac(const uint8_t mac[ETHER_ADDR_LEN], uin
 }
 
 //
-EResultT CCommDriverFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+EResultT CCommDriverFactory::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
-  CBaseModule::IInit(callback_ptr, target_api);
+  CBaseModule::IInit(callback_ptr, target_api, init_info);
 
   //Example of initialization of the profiler counter
   char prof_name[] = "COMM";
@@ -552,7 +552,7 @@ EResultT CCommDriverFactory::IColdStart()
   return E_OK;
 }
 
-EResultT CCommDriverFactory::IConfigure(uint32_t id, void *in, void **out)
+EResultT CCommDriverFactory::IConfigure(EConfigId id, void *in, void **out)
 {
   char str[] = "Call passed";
   callback_ptr_->ILogData(E_LOW, str);

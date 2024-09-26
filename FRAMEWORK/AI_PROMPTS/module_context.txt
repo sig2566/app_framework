@@ -1,0 +1,5 @@
+[Context Section]
+We develop C++ software using module design. Modules have common interface to access them.
+There is C++ component called Running Support Environment, which loads modules, activates them and provides callback services from callback interface.
+**Details of modulle structure**
+- Every module has its unique name. Name may include hight case letters,

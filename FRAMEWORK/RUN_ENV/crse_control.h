@@ -73,13 +73,9 @@ public:
 	virtual EResultT IWarmStart() ;
 	virtual EResultT IHotStart() ;
 	virtual EResultT IStop(ESeverityT severity);
-	virtual EResultT IConfigure(uint32_t id, void *in, void **out);
+	virtual EResultT IConfigure(EConfigId id, void *in, void **out);
 	virtual EResultT IGetInfo(const char* module_name, uint32_t major_ver, uint32_t minor_ver, uint32_t build_num, char* add_info);
 	virtual EResultT IExitReq(ESeverityT severity);
-	//If fapi_req_p==NULL than there is not other requests in this TTI
-	virtual EResultT IFAPI_req_put(void* fapi_req_p);
-	//fapi_evt_p == NULL means no events.
-	virtual EResultT IFAPI_evt_get(void** fapi_evt_p);
 
 	// IRSE_DebugAPI methods
 	virtual EResultT IDebugInit(const char* add_info);
