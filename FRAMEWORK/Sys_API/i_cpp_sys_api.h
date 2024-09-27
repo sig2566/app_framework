@@ -77,6 +77,7 @@ namespace ai_framework_proj
 		E_MAX_CALL_REASON
 	};
 
+	//These enums are used for IConfigure method
 	enum EConfigId
 	{
 	    e_GENERAL,
@@ -523,15 +524,29 @@ l,		e_PUT_INIT_DATA
 	class IModuleControlCallBackAPI
 	{
 	public:
-
-		virtual EResultT IMemAreaDefine(CMemAreaP *mearea_ptr_) = 0;
+		/**!
+		* @Function: EResultT IMemAreaDefine(CMemAreaP *mearea_ptr);
+		* @Purpose:
+		* Define and allocate FIFO Memory area object. It creates it in RSE with specific name and returns the FIFO producer pointer.
+		* @Parameters:
+		* mearea_ptr - any control value.
+		**/
+		virtual EResultT IMemAreaDefine(CMemAreaP *mearea_ptr) = 0;
 		virtual EResultT IRegistryTraceEntry(char *format_str, uint32_t *id) = 0;
 		virtual EResultT IRegistryProfileEntry(CProfileCnt *ptr, const char *name, uint32_t *prof_id) = 0;
 		virtual EResultT ILogData(ESeverityT severity, char *str) = 0;
 		virtual EResultT ITraceData(uint32_t id, uint32_t line_num, uint64_t val0= 0, uint64_t val1=0, uint64_t val2=0, uint64_t val3=0) = 0;
 		virtual EResultT IStopRequest(ESeverityT severity) = 0;
 		virtual EResultT IGetModule(const char mod_name[], IModuleControlAPI **mod_ptr) = 0;
-		virtual EResultT IMemAreaMount(CMemAreaP *mearea_ptr_, char area_name[], EAccessT ac_type) = 0;
+
+		/**!
+		* @Function: EResultT IMemAreaMount(CMemAreaP *mearea_ptr, char area_name[], EAccessT ac_type) ;
+		* @Purpose:
+		* Connection
+		* @Parameters:
+		* param - any control value.
+		**/
+		virtual EResultT IMemAreaMount(CMemAreaP *mearea_ptr, char area_name[], EAccessT ac_type) = 0;
 		virtual EResultT IDelay_us(uint32_t usecs)= 0;
 		virtual EResultT IAllocateEventCnt(const char *cnt_name, volatile int64_t **cnt_ptr)= 0;
 		virtual EResultT ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data) = 0;
@@ -540,20 +555,90 @@ l,		e_PUT_INIT_DATA
 	/*******************************************************************************************//*!
 	*@class IModuleControlAPI
 	*@brief The purpose of this class is :
-	*@brief API for access to the 5G moduler
+	*@brief API for access to the module
 	***********************************************************************************************/
 	class IModuleControlAPI
 	{
 	public:
-		//Module initialization. It gets the following parameters:
-		//pointer to IModuleControlCallBackAPI callback_ptr.
+		/**!
+		* @Function: EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
+		* @Purpose: Module data initialization. Initialization includes the following major stages:
+		* Call Initialization for CBaseModule class: CBaseModule::IInit(callback_ptr, target_api, init_info);
+		* Allocates memories and objects
+		* Allocates producer side CMemArea FIFOs if the there are data transfer with other modules.
+		* It handles  the following parameters:
+		* @Parameters:
+		* callback_ptr - pointer to IModuleControlCallBackAPI callback_ptr. This pointer allows access to RSE services
+		* target_api - pointer to RSE control
+		* init_info - char* array of some initial information. NULL if there is not such information.
+		**/
 		virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info) = 0;
+		/**!
+		* @Function: EResultT IColdStart();
+		* @Purpose: The following tasks my be done if necessary.
+		* Connection with other modules via CMemArea FIFOs.
+		* Import and export of pointers of APIs
+		* Initialization of the cold start data
+		* @Parameters: None
+		**/
 		virtual EResultT IColdStart() = 0;
+		/**!
+		* @Function: EResultT IWarmStart();
+		* @Purpose: The following tasks my be done if necessary.
+		* Connection with other modules via CMemArea FIFOs.
+		* Preparing threads, mutexes, semaphores, etc.
+		* Initialization of the warm start data
+		* @Parameters: None
+		**/
 		virtual EResultT IWarmStart() = 0;
+		/**!
+		* @Function: EResultT IHotStart();
+		* @Purpose: The following tasks my be done if necessary.
+		* Preparing threads, mutexes, semaphores, etc.
+		* Initialization of the hot start data
+		* @Parameters: None
+		**/
 		virtual EResultT IHotStart() = 0;
+		/**!
+		* @Function: EResultT IStop();
+		* @Purpose:
+		* Informing the module that running was stop.
+		* All modules threads should be stopped.
+		* @Parameters: None
+		**/
 		virtual EResultT IStop(ESeverityT severity) = 0;
+		/**!
+		* @Function: EResultT ICall();
+		* @Purpose:
+		* Call the module if it runs in the steps mode.
+		* @Parameters:
+		* param - any control value.
+		**/
 		virtual EResultT ICall(uint32_t param) = 0;
+
+		/**!
+		* @Function: EResultT IConfigure(EConfigId id, void *in, void **out);
+		* @Purpose:
+		*Making additional configuration to the module.
+		* @Parameters:
+		* id - type of configuration: There are the following configuration types:
+		* e_GENERAL, - General configuration information
+	    * e_GET_API, - Export specific API to other module. "in" parameter points to string with the API name, "out" is the returned API value.
+		* e_GET_TEST_MODULE_API, - Export specific test API if necessary.
+	    * e_TEST_CONFIG, - Configure the test running.
+		* e_PUT_INIT_DATA - Send additional initialization data if necessary.
+		* in - Specific receiving data
+		* out - Specific data to send out
+		**/
 		virtual EResultT IConfigure(EConfigId id, void *in, void **out) = 0;
+
+		/**!
+		* @Function: EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info)
+		* @Purpose:
+		* Get module version information.
+		* @Parameters:
+		* version information..
+		**/
 		virtual EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info) = 0;
 	};
 

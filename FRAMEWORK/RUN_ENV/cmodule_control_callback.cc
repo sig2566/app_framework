@@ -24,9 +24,9 @@ CModuleControlCallBack::~CModuleControlCallBack() {
 	// TODO Auto-generated destructor stub
 }
 
-EResultT CModuleControlCallBack::IMemAreaDefine(CMemAreaP *mearea_ptr_)
+EResultT CModuleControlCallBack::IMemAreaDefine(CMemAreaP *mearea_ptr)
 {
-	main_class_ptr_->AddMemArea(mearea_ptr_);
+	main_class_ptr_->AddMemArea(mearea_ptr);
 	return E_OK;
 }
 EResultT CModuleControlCallBack::IRegistryTraceEntry(char *format_str, uint32_t *id)
@@ -137,12 +137,12 @@ EResultT CModuleControlCallBack::IGetModule(const char mod_name[], IModuleContro
 	return E_FAIL;
 
 }
-EResultT CModuleControlCallBack::IMemAreaMount(CMemAreaP *mearea_ptr_, char area_name[], EAccessT ac_type)
+EResultT CModuleControlCallBack::IMemAreaMount(CMemAreaP *mearea_ptr, char area_name[], EAccessT ac_type)
 {
 	uint32_t nuareas_;
 	uint32_t i;
 	main_class_ptr_->IGetMemAreasNum(&nuareas_);
-	*mearea_ptr_ = NULL;
+	*mearea_ptr = NULL;
 	for(i= 0; i < nuareas_; i++)
 	{
 		CMemArea* area_ptr= main_class_ptr_->IGetMemArea(i);
@@ -154,12 +154,12 @@ EResultT CModuleControlCallBack::IMemAreaMount(CMemAreaP *mearea_ptr_, char area
 				if(area_ptr->GetAccess()== E_WRITE)
 				{
 					ASSERT(FALSE);
-					*mearea_ptr_ = NULL;
+					*mearea_ptr = NULL;
 					return E_FAIL;
 				}
 				area_ptr->SetAccess(ac_type);
 			}
-			*mearea_ptr_ = area_ptr;
+			*mearea_ptr = area_ptr;
 			return E_OK;
 		}
 	}

@@ -41,14 +41,14 @@ public:
 
 	CModuleControlCallBack();
 	virtual ~CModuleControlCallBack();
-	EResultT IMemAreaDefine(CMemAreaP *mearea_ptr_);
+	EResultT IMemAreaDefine(CMemAreaP *mearea_ptr);
 	EResultT IRegistryTraceEntry(char *format_str, uint32_t *id);
 	EResultT IRegistryProfileEntry(CProfileCnt *ptr, const char *name, uint32_t *prof_id);
 	EResultT ILogData(ESeverityT severity, char *str);
 	EResultT ITraceData(uint32_t id, uint32_t line_num, uint64_t val0= 0, uint64_t val1=0, uint64_t val2=0, uint64_t val3=0) ;
 	EResultT IStopRequest(ESeverityT severity);
 	EResultT IGetModule(const char mod_name[], IModuleControlAPI **mod_ptr);
-	EResultT IMemAreaMount(CMemAreaP *mearea_ptr_, char area_name[], EAccessT ac_type);
+	EResultT IMemAreaMount(CMemAreaP *mearea_ptr, char area_name[], EAccessT ac_type);
 	EResultT IDelay_us(uint32_t usecs);
 	EResultT IAllocateEventCnt(const char *cnt_name, volatile int64_t **cnt_ptr);
 	EResultT ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data);
