@@ -29,6 +29,7 @@
 #include "i_sys_utils.h"
 #include "i_cpp_sys_api.h"
 #include "i_cpp_module.h"
+#include "i_base_module_api.h"
 
 
 #endif /* API_I_API_COMMON_H_ */

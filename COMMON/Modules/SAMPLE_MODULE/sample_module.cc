@@ -1,24 +1,14 @@
-/******************************************************************
- * sample_module.cc
- * Author: Igor Shoihet
- * Copyright (c) 2018 - 2020 Airspan Networks
- * All Rights Reserved.
- * Confidential and Proprietary - Airspan Networks
- *******************************************************************/
 
 #include "sample_module.h"
 
-EResultT CModuleControl::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
+EResultT CSAMPLE_MODULE::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
 {
 
     /********************************************************************************************/
-    // MANDATORY fields
+    // MANDATORY code
     // Initialization of the pointers to the framework services.
-    callback_ptr_= callback_ptr;
-    target_ptr_= target_api;
-
-    /*All other code are OPTIONAL. They are just examples of use the Framework services*/
-    /*********************************************************************************************/
+	CBaseModule::IInit(callback_ptr, target_api, init_info);
+	/*********************************************************************************************/
 
     uint32_t inc_size= 100; //Size of FIFO element
     uint32_t size= 10; //Number of FIFO elements
@@ -36,7 +26,7 @@ EResultT CModuleControl::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget 
     call_prof_.Init(MOD_NAME, "EXAMPLE_PROF"); //INIT Profiler counter
     return E_OK;
 }
-EResultT CModuleControl::IColdStart()
+EResultT CSAMPLE_MODULE::IColdStart()
 	{
 		const char mod_name[]= "TEST_MODULE";
 		const char const_mod_name[] = "CONST_DATA";
@@ -51,23 +41,13 @@ EResultT CModuleControl::IColdStart()
 		//Example of getting pointer to other component API
 		ASSERT(callback_ptr_->IGetModule(mod_name, &test_module_p_) == E_OK);
 		ASSERT(callback_ptr_->IGetModule(const_mod_name, &const_data_module_p_) == E_OK);
-
+		void *tmp_p;
+		ASSERT(const_data_module_p_->IConfigure(e_GET_API, NULL, &tmp_p) == E_OK);
+		const_api_p_= (CConst_Data_api*)tmp_p;
 		
 		return E_OK;
 	}
-EResultT CModuleControl::IWarmStart()
-	{
-		return E_OK;
-	}
-EResultT CModuleControl::IHotStart()
-	{
-		return E_OK;
-	}
-EResultT CModuleControl::IStop(ESeverityT severity)
-	{
-		return E_OK;
-	}
-EResultT CModuleControl::ICall(uint32_t param)
+EResultT CSAMPLE_MODULE::ICall(uint32_t param)
 	{
 		static JobReqBase_t *req;
 		if((param == (uint32_t)E_WAKEUP) || (param == (uint32_t)E_DEBUG))
@@ -142,34 +122,44 @@ EResultT CModuleControl::ICall(uint32_t param)
 		}
 		return E_OK;
 	}
-EResultT CModuleControl::IConfigure(EConfigId id, void *in, void **out)
+EResultT CSAMPLE_MODULE::IConfigure(EConfigId id, void *in, void **out)
 	{
+		if(id == e_GET_API){
+			*out = (void*)static_cast<sample_module_api*>(this);
+		}
 		char str[]= "Call passed";
 		callback_ptr_->ILogData(E_LOW, str);
 		return E_OK;
 	}
-EResultT CModuleControl::IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info)
+
+uint32_t CSAMPLE_MODULE::calc_sum_uint_16()
+{
+	uint32_t num;
+	int i;
+	uint32_t sum=0;
+	const int16_t *arr_p = const_api_p_->get_INV_FULL_LUT(&num);
+	for (i=0; i< num; i++)
 	{
-        /*********************************************************************************/
-        //MANDATORY code. Return module version information.
-        char time[]= TIME_DATE;
-        strncpy(module_name, mod_name_, MDO_NAME_SIZE);
-		*major_ver= MAJOR_ID;
-		*minor_ver= MINOR_ID;
-		*build_num= 0;
-		strncpy(add_info, time, MDO_NAME_SIZE);
-		return E_OK;
-		/*********************************************************************************/
+		sum += arr_p[i];
 	}
-CModuleControl::CModuleControl(const char *mod_name)
+	return sum;
+}
+
+CSAMPLE_MODULE::CSAMPLE_MODULE(const char *mod_name)
 	{
-        /*********************************************************************************/
-        //MANDATORY code. Init mandatory fields
-		callback_ptr_ = NULL;
-		target_ptr_ = NULL;
-		strncpy(mod_name_, mod_name, MDO_NAME_SIZE);
-		/*********************************************************************************/
-		//Optional code
+
+		const_api_p_ = NULL;
+		const_data_module_p_ = NULL;
+		in_ptr = NULL;
+		out_ptr = NULL;
+		test_module_p_ = NULL;
+		mem_pool_ = NULL;
+		job_req_ = NULL;
+		job_rsp_ = NULL;
+	}
+
+	CSAMPLE_MODULE::CSAMPLE_MODULE()
+	{
 
 		const_api_p_ = NULL;
 		const_data_module_p_ = NULL;
@@ -184,12 +174,13 @@ CModuleControl::CModuleControl(const char *mod_name)
 	}
 
 
-class CModuleControl     *g_module_ptr = NULL;
+
+class CSAMPLE_MODULE     *g_module_ptr = NULL;
 
 //API function to connect with ITarget API
 extern "C" uint32_t API_CONNECT_FUNC(void **target_ptr)
 {
-	g_module_ptr = new CModuleControl(MOD_NAME);
+	g_module_ptr = new CSAMPLE_MODULE();
 	*target_ptr= static_cast<IModuleControlAPI*>(g_module_ptr);
 	return 0;
 }

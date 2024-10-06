@@ -1,5 +1,570 @@
 [Context Section]
-We develop C++ software using module design. Modules have common interface to access them.
-There is C++ component called Running Support Environment, which loads modules, activates them and provides callback services from callback interface.
-**Details of modulle structure**
-- Every module has its unique name. Name may include hight case letters,
+The task involves developing a C++ module within a module-based software framework. The modules follow a common interface, managed by the Running Support Environment (RSE), which handles loading, activation, and providing callback services.
+
+**Details of the module structure**
+- Every module has its unique name. Name may include high case letters, ampersands and numbers. For example MY_MODULE4K is correct name.
+- Module sources are located in the directory with name of the name of module.
+- Module includes minimum the following files: 
+makefile the file contain specific module settings. It has the following format:
+``` make 
+# compile mesh classes
+NAME = MODULE_NAME
+ROOT = ../../../FRAMEWORK
+#Use LIB_SO variable to send specific parameters to the linker
+#Example
+#LIB_SO += -L$(BOOST_LIB) -lboost_python312 -lboost_thread  -lpython3.12 
+
+#Use OPT_H to send specific parameters to the compiler
+#Example
+#OPT_H =-I$(PYTHON_INC) -I$(BOOST_INC)
+
+include $(ROOT)/Make/build.mk
+```
+Where MODULE_NAME is the name of the module
+
+*module_name.h* header file includes at least definition of the CMODULE_NAME class as:
+``` .h
+#include "i_api_common.h"
+#include "version.h"
+
+using namespace ai_framework_proj;
+class CMODULE_NAME : public CBaseModule
+{
+Some code
+}
+```
+The CBaseModule base class implements the module interface IModuleControlAPI:
+```
+    /*******************************************************************************************//*!
+    *@class CBaseModule
+    *@brief The purpose of this class is :
+    *@brief Base class for module implementation.
+    *@brief It contains basic implementation of IModuleControlAPI API
+    ***********************************************************************************************/
+    class CBaseModule : public IModuleControlAPI
+    {
+    public:
+        virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api)
+        {
+
+            /********************************************************************************************/
+            // MANDATORY fields
+            // Initialization of the pointers to the RSE services.
+            callback_ptr_= callback_ptr;
+            target_ptr_= target_api;
+            /*********************************************************************************************/
+
+            return E_OK;
+        }
+        virtual EResultT IColdStart()
+            {
+               return E_OK;
+            }
+        virtual EResultT IWarmStart()
+            {
+                return E_OK;
+            }
+        virtual EResultT IHotStart()
+            {
+                return E_OK;
+            }
+        virtual EResultT IStop(ESeverityT severity)
+            {
+                return E_OK;
+            }
+        virtual EResultT ICall(uint32_t param)
+            {
+        		return E_OK;
+            }
+        virtual EResultT IConfigure(uint32_t id, void *in, void **out)
+            {
+                return E_OK;
+            }
+        virtual EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info)
+            {
+                /*********************************************************************************/
+                //MANDATORY code. Return module version information.
+                strncpy(module_name, mod_name_, MDO_NAME_SIZE);
+                *major_ve r = MAJOR_ID;
+                /*************************************************************************************/
+                *minor_ver = MINOR_ID;
+                *build_num = 0;
+                strncpy(add_info, TIME_DATE, MDO_NAME_SIZE);
+                return E_OK;
+                /*********************************************************************************/
+            }
+        CBaseModule(const char *mod_name)
+            {
+                /*********************************************************************************/
+                //MANDATORY code. Init mandatory fields
+
+                callback_ptr_ = NULL;
+                target_ptr_ = NULL;
+                strncpy(mod_name_, mod_name, MDO_NAME_SIZE);
+                /*********************************************************************************/
+
+
+            }
+
+        CBaseModule()
+        {
+            callback_ptr_ = NULL;
+            target_ptr_ = NULL;
+            strncpy(mod_name_, MOD_NAME, MDO_NAME_SIZE);
+
+        }
+
+
+    protected:
+
+          /***********************************************************************************/
+         //MANDATORY fields. Only three variables below must be copied into new class
+         IModuleControlCallBackAPI* callback_ptr_;
+         ITarget*    target_ptr_;
+         char mod_name_[MDO_NAME_SIZE];
+         /***********************************************************************************/
+
+    };
+
+```
+*module_name.cc* C++ source file includes at least implementation of the CMODULE_NAME class and exports API_CONNECT_FUNC function to connect the module to RSE. **Example code**
+```cpp
+class CMODULE_NAME      *g_module_ptr = NULL;
+
+
+//API function to connect with ITarget API
+extern "C" uint32_t API_CONNECT_FUNC(void **target_ptr)
+{
+	g_module_ptr = new CMODULE_NAME ();
+	*target_pt r= static_cast<IModuleControlAPI*>(g_module_ptr);
+	return 0;
+
+}
+```
+
+*version.h* version file.  **Example code**
+	```h
+#ifndef VERSION_H_
+#define VERSION_H_
+#define MAJOR_ID    (0)
+#define MINOR_ID	(1)
+#endif /* VERSION_H_ */
+```
+**General data types**,  using by modules:
+*Memory allocation and data communication support*. RSE supports the memory management of modules with class CMemArea. It is allocated by RSE after some module asks RSE callback IModuleControlCallBackAPI::IMemAreaDefine() (see this function description below) 
+The purpose of this class is :
+Explicit memory allocation by RSE.
+Inter-module thread safe data transfer.
+FIFO support one thread input and one thread output. The following methods are used: void *AllocFIFO(), void *PushFIFO(), void *PopFIFO()
+FIFO support for multi-thread input or/and output. The following methods are used: EResultT PushFIFO_MT(void *data_p, uint32_t data_size), void *PopFIFO_MT(void *data_p, uint32_t data_size)
+Dual Buffer support. It uses the following methods: void *GetReadBufP(), void *GetWriteBufP(), void DualBufSwap(), 
+Dynamic memory allocation of memory chunks with the same size. The following methods are used: void *AllocPoolChunk(),  void *GetPrevChunk(uint32_t  prev_idx)prev_idx)
+	CMemArea object allocation and initialization.
+Memory allocation is implemented during call of module IInit function. The following  macro is used to allocate the memory: #define DEFINE_MEMAREA(size, inc_size, name, Attrib, area_ptr ). Where size is the number of allocating chunks, inc_size is the chunk size, const char *name is the name of the initialized CMemArea object. It is saved in RSE. The “Attrib” should be set to 0. The “area_ptr” is the pointer to the created in RSE object. 
+Connection of some module to the CMemArea object withe specific name. The macro “#define MEMAREA_CONNECT(name, area_ptr, access_t)”. Where the “name” parameter is the name of the CMemArea object and area_ptr is pointer to allocated already object, access_t should be set to 0.
+
+General module API. This API is implemented by every module and allows to RSE to control the modules running.
+	/*******************************************************************************************//*!
+	*@class IModuleControlAPI
+	*@brief The purpose of this class is :
+	*@brief API for access to the module
+	***********************************************************************************************/
+	class IModuleControlAPI
+	{
+	public:
+		/**!
+		* @Function: EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
+		* @Purpose: Module data initialization. Initialization includes the following major stages:
+		* Call Initialization for CBaseModule class: CBaseModule::IInit(callback_ptr, target_api, init_info);
+		* Allocates memories and objects
+		* Allocates producer side CMemArea FIFOs if the there are data transfer with other modules.
+		* It handles  the following parameters:
+		* @Parameters:
+		* callback_ptr - pointer to IModuleControlCallBackAPI callback_ptr. This pointer allows access to RSE services
+		* target_api - pointer to RSE control
+		* init_info - char* array of some initial information. NULL if there is not such information.
+		**/
+		virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info) = 0;
+		/**!
+		* @Function: EResultT IColdStart();
+		* @Purpose: The following tasks my be done if necessary.
+		* Connection with other modules via CMemArea FIFOs.
+		* Import and export of pointers of APIs
+		* Initialization of the cold start data
+		* @Parameters: None
+		**/
+		virtual EResultT IColdStart() = 0;
+		/**!
+		* @Function: EResultT IWarmStart();
+		* @Purpose: The following tasks my be done if necessary.
+		* Connection with other modules via CMemArea FIFOs.
+		* Preparing threads, mutexes, semaphores, etc.
+		* Initialization of the warm start data
+		* @Parameters: None
+		**/
+		virtual EResultT IWarmStart() = 0;
+		/**!
+		* @Function: EResultT IHotStart();
+		* @Purpose: The following tasks my be done if necessary.
+		* Preparing threads, mutexes, semaphores, etc.
+		* Initialization of the hot start data
+		* @Parameters: None
+		**/
+		virtual EResultT IHotStart() = 0;
+		/**!
+		* @Function: EResultT IStop();
+		* @Purpose:
+		* Informing the module that running was stop.
+		* All modules threads should be stopped.
+		* @Parameters: None
+		**/
+		virtual EResultT IStop(ESeverityT severity) = 0;
+		/**!
+		* @Function: EResultT ICall();
+		* @Purpose:
+		* Call the module if it runs in the steps mode.
+		* @Parameters:
+		* param - any control value.
+		**/
+		virtual EResultT ICall(uint32_t param) = 0;
+
+		/**!
+		* @Function: EResultT IConfigure(EConfigId id, void *in, void **out);
+		* @Purpose:
+		*Making additional configuration to the module.
+		* @Parameters:
+		* id - type of configuration: There are the following configuration types:
+		* e_GENERAL, - General configuration information
+	    * e_GET_API, - Export specific API to other module. "in" parameter points to string with the API name, "out" is the returned API value.
+		* e_GET_TEST_MODULE_API, - Export specific test API if necessary.
+	    * e_TEST_CONFIG, - Configure the test running.
+		* e_PUT_INIT_DATA - Send additional initialization data if necessary.
+		* in - Specific receiving data
+		* out - Specific data to send out
+		**/
+		virtual EResultT IConfigure(EConfigId id, void *in, void **out) = 0;
+
+		/**!
+		* @Function: EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info)
+		* @Purpose:
+		* Get module version information.
+		* @Parameters:
+		* version information..
+		**/
+		virtual EResultT IGetInfo(char* module_name, uint32_t *major_ver, uint32_t *minor_ver, uint32_t *build_num, char* add_info) = 0;
+	};
+The callback API. This interface pointer is sent to every module with IInit function and it points to module support services, implemented in RSE.	/*******************************************************************************************//*!
+	*@class IModuleControlCallBackAPI
+	*@brief The purpose of this class is :
+	*@brief API for asynchronous services, provided by the RSE for the modules
+	***********************************************************************************************/
+	class IModuleControlCallBackAPI
+	{
+	public:
+		/**!
+		* @Function: EResultT IMemAreaDefine(CMemAreaP *mearea_ptr);
+		* @Purpose:
+		* Define and allocate FIFO Memory area object. It creates it in RSE with specific name and returns the FIFO producer pointer.
+		* @Parameters:
+		* mearea_ptr - any control value.
+		**/
+		virtual EResultT IMemAreaDefine(CMemAreaP *mearea_ptr) = 0;
+		virtual EResultT IRegistryTraceEntry(char *format_str, uint32_t *id) = 0;
+		virtual EResultT IRegistryProfileEntry(CProfileCnt *ptr, const char *name, uint32_t *prof_id) = 0;
+		virtual EResultT ILogData(ESeverityT severity, char *str) = 0;
+		virtual EResultT ITraceData(uint32_t id, uint32_t line_num, uint64_t val0= 0, uint64_t val1=0, uint64_t val2=0, uint64_t val3=0) = 0;
+		virtual EResultT IStopRequest(ESeverityT severity) = 0;
+		virtual EResultT IGetModule(const char mod_name[], IModuleControlAPI **mod_ptr) = 0;
+
+		/**!
+		* @Function: EResultT IMemAreaMount(CMemAreaP *mearea_ptr, char area_name[], EAccessT ac_type) ;
+		* @Purpose:
+		* Connection
+		* @Parameters:
+		* param - any control value.
+		**/
+		virtual EResultT IMemAreaMount(CMemAreaP *mearea_ptr, char area_name[], EAccessT ac_type) = 0;
+		virtual EResultT IDelay_us(uint32_t usecs)= 0;
+		virtual EResultT IAllocateEventCnt(const char *cnt_name, volatile int64_t **cnt_ptr)= 0;
+		virtual EResultT ISaveProfileInfo(uint32_t prof_id, ProfilePoint *data) = 0;
+	};
+
+Connection between modules. There are two methods for connection between modules:
+Use CMemArea objects. This object allows to implement FIFO or double buffer for data transfer.
+One module may implement some pure virtual API and expose it to the other module.
+		[Example]
+		Definition of pure virtual API:
+		```.h
+/*****************************************************************
+ * i_sample_module_api.h
+ *
+ *****************************************************************/
+#ifndef SAMPLE_MODULE_API_H_
+#define SAMPLE_MODULE_API_H_
+
+ struct sample_module_api{
+	 virtual uint32_t calc_sum_uint_16() = 0;
+ };
+#endif /* SAMPLE_MODULE_API_H_ */
+```
+	Definition of class, implement and expose the sample_module_api:
+```sample_module.h
+#ifndef MODULES_SAMPLE_MODULE_SAMPLE_MODULE_H_
+#define MODULES_SAMPLE_MODULE_SAMPLE_MODULE_H_
+#include "i_api_common.h"
+#include "i_const_data_api.h"
+#include "i_sample_module_api.h"
+#include "version.h"
+
+using namespace ai_framework_proj;
+
+
+/******************************************************************************************//*!
+ *@class CSAMPLE_MODULE
+ *@brief The purpose of this class is :
+ *@brief It is example of the component implementation.
+ *@brief In the case of creation new class only MANDATORY code must be copied. Other code is optional.
+ *@brief They are used for demonstration of the RSE services.
+ *********************************************************************************************/
+class CSAMPLE_MODULE : public CBaseModule, public sample_module_api
+{
+    //Examples of useful data types (optional)
+    CMemArea *in_ptr, *out_ptr, *mem_pool_, *job_req_, *job_rsp_; //Example of pointers to data areas
+    CProfileCnt call_prof_;  //Example of profiler counter
+    IModuleControlAPI  *test_module_p_; //Example pointer to module API.
+    IModuleControlAPI  *const_data_module_p_;
+    CConst_Data_api *const_api_p_;
+public:
+    virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
+    virtual EResultT IColdStart();
+    virtual EResultT ICall(uint32_t param);
+    virtual EResultT IConfigure(EConfigId id, void *in, void **out);
+    virtual uint32_t calc_sum_uint_16();
+    CSAMPLE_MODULE();
+    CSAMPLE_MODULE(const char *mod_name);
+};
+
+```
+	Implementation and expose the API:
+```sample_module.cc
+………………..
+EResultT CSAMPLE_MODULE::IConfigure(EConfigId id, void *in, void **out)
+	{
+		if(id == e_GET_API){
+			*out = (void*)static_cast<sample_module_api*>(this);
+		}
+		return E_OK;
+	}
+uint32_t CSAMPLE_MODULE::calc_sum_uint_16()
+{
+	uint32_t num;
+………………………
+	return sum;
+}
+```
+
+
+[Example of module]
+```.cc
+
+#include "sample_module.h"
+
+EResultT CSAMPLE_MODULE::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info)
+{
+sample_module
+    /********************************************************************************************/
+    // MANDATORY code
+    // Initialization of the pointers to the framework services.
+	CBaseModule::IInit(callback_ptr, target_api, init_info);
+	/*********************************************************************************************/
+
+    uint32_t inc_size= 100; //Size of FIFO element
+    uint32_t size= 10; //Number of FIFO elements
+
+    //Example of definition and allocation of memory areas
+    DEFINE_MEMAREA(size, inc_size, "TEST_MEM_AREA_2", 0, in_ptr);
+    DEFINE_MEMAREA(size, inc_size, "TEST_DATA_POOL", 0, mem_pool_);
+    DEFINE_MEMAREA(size, sizeof(JobReqBase_t), "TEST_JOB_REQ", 0, job_req_);
+    DEFINE_MEMAREA(size, sizeof(JobRspBase_t), "TEST_JOB_RSP", 0, job_rsp_);
+    Note: the DEFINE_MEMAREA macro is used to define only input objects.
+    //Example of log function
+    LOG(E_MEDIUM, "%s init passed", mod_name_);
+
+    //Example of initialization of the profiler counter
+    call_prof_.Init(MOD_NAME, "EXAMPLE_PROF"); //INIT Profiler counter
+    return E_OK;
+}
+EResultT CSAMPLE_MODULE::IColdStart()
+	{
+		const char mod_name[]= "TEST_MODULE";
+		const char const_mod_name[] = "CONST_DATA";
+
+		// Example connection with memory areas
+		MEMAREA_CONNECT("TEST_MEM_AREA_2", &out_ptr, E_READ);	// out_ptr -> TEST_MEM_AREA_2, used for data read
+		MEMAREA_CONNECT("TEST_MEM_AREA_1", &in_ptr, E_WRITE);	// in_ptr -> TEST_MEM_AREA_1, used for data write
+		MEMAREA_CONNECT("TEST_DATA_POOL", &mem_pool_, E_READ);
+		MEMAREA_CONNECT("TEST_JOB_REQ", &job_req_, E_WRITE);
+		MEMAREA_CONNECT("TEST_JOB_RSP", &job_rsp_, E_READ);
+
+		//Example of getting pointer to other component API
+		ASSERT(callback_ptr_->IGetModule(mod_name, &test_module_p_) == E_OK);
+		ASSERT(callback_ptr_->IGetModule(const_mod_name, &const_data_module_p_) == E_OK);
+		void *tmp_p;
+		ASSERT(const_data_module_p_->IConfigure(e_GET_API, NULL, &tmp_p) == E_OK);
+		const_api_p_= (CConst_Data_api*)tmp_p;
+		
+		return E_OK;
+	}
+EResultT CSAMPLE_MODULE::ICall(uint32_t param)
+	{
+		static JobReqBase_t *req;
+		if((param == (uint32_t)E_WAKEUP) || (param == (uint32_t)E_DEBUG))
+		{
+		    //Example of use profiler between to processing points
+			struct timespec t1, t2;
+			uint32_t num= 0xff, val=0, i;
+			req= NULL;
+			//Check profiler couner & loG
+			call_prof_.Start();		// init activate profiler
+			clock_gettime(2, &t1);		// t1 = profiler counter
+			for(i=0; i< num; i++)
+			{
+				uint32_t tmp= i+1;
+				val= val + tmp;
+			}
+			call_prof_.Stop();			// finish profiling measure interval
+			clock_gettime(2, &t2);		// t2 = profiler counter
+			LOG(E_MEDIUM, "Result of Phibonachi digit calculation is %d s1= %ld s2=%ld",val, t1.tv_nsec, t2.tv_nsec);
+
+			// Example access to the memory areas as to the FIFO
+			char *in_p= (char*)in_ptr->PopFIFO();
+			if(in_p != NULL)
+			{
+				char *out_p= (char*)out_ptr->AllocFIFO();
+				ASSERT(out_p);
+				
+				memcpy(out_p, in_p, in_ptr->GetDataSize());
+				out_ptr->PushFIFO();
+			}
+
+			//Example sending Job to the TEST_MODULE
+			if(param == (uint32_t)E_DEBUG)
+			{
+			    //Example of prepare new job request
+				req = (JobReqBase_t*)job_req_->AllocFIFO();
+				uint32_t tmp;
+				ASSERT(req != NULL);
+				req->call_back_p= (IModuleControlAPI*)this;
+				req->req_id = 1;
+				//Example of dynamic memory allocation of data junks
+				req->in_buf = mem_pool_->AllocPoolChunk();
+				req->out_buf = mem_pool_->AllocPoolChunk();
+				*(uint32_t*)req->in_buf = -1;
+				*(uint32_t*)req->out_buf = 0;
+				req->job_cmd = GEN_JOB;
+				job_req_->PushFIFO();
+
+				//Example of call the other module
+				test_module_p_->ICall((uint32_t)E_DIRECT);
+				LOG(E_MEDIUM, "%s sent job to other module", mod_name_);
+
+			}
+
+		}
+
+		//Example of handle response from other module
+		if(param == (uint32_t)E_RESPONSE)
+		{
+			JobRspBase_t *resp = (JobRspBase_t *)job_rsp_->PopFIFO();
+			ASSERT(resp != NULL);
+
+			if((resp->req_id == 1) && (resp->res == E_OK))
+			{
+				if(*(uint32_t*)req->out_buf == -1)
+				{
+					LOG(E_MEDIUM, "Response ok, test passed");
+					return E_OK;
+				}
+			}
+			LOG(E_MEDIUM, "Response not ok, test failed");
+		}
+		return E_OK;
+	}
+EResultT CSAMPLE_MODULE::IConfigure(EConfigId id, void *in, void **out)
+	{
+		if(id == e_GET_API){
+			*out = (void*)static_cast<sample_module_api*>(this);
+		}
+		char str[]= "Call passed";
+		callback_ptr_->ILogData(E_LOW, str);
+		return E_OK;
+	}
+
+uint32_t CSAMPLE_MODULE::calc_sum_uint_16()
+{
+	uint32_t num;
+	int i;
+	uint32_t sum=0;
+	const int16_t *arr_p = const_api_p_->get_INV_FULL_LUT(&num);
+	for (i=0; i< num; i++)
+	{
+		sum += arr_p[i];
+	}
+	return sum;
+}
+
+CSAMPLE_MODULE::CSAMPLE_MODULE(const char *mod_name)
+	{
+
+		const_api_p_ = NULL;
+		const_data_module_p_ = NULL;
+		in_ptr = NULL;
+		out_ptr = NULL;
+		test_module_p_ = NULL;
+		mem_pool_ = NULL;
+		job_req_ = NULL;
+		job_rsp_ = NULL;
+	}
+
+	CSAMPLE_MODULE::CSAMPLE_MODULE()
+	{
+
+		const_api_p_ = NULL;
+		const_data_module_p_ = NULL;
+		in_ptr = NULL;
+		out_ptr = NULL;
+		test_module_p_ = NULL;
+		mem_pool_ = NULL;
+		job_req_ = NULL;
+		job_rsp_ = NULL;
+
+
+	}
+
+
+
+class CSAMPLE_MODULE     *g_module_ptr = NULL;
+
+//API function to connect with ITarget API
+extern "C" uint32_t API_CONNECT_FUNC(void **target_ptr)
+{
+	g_module_ptr = new CSAMPLE_MODULE();
+	*target_ptr= static_cast<IModuleControlAPI*>(g_module_ptr);
+	return 0;
+}
+
+
+[Rules]
+Google coding convention is used
+STL and Boost libraries should not be used in modules code to avoid possible real time problems.
+Dynamic memory allocation may be used only with IInit function,
+
+[Task]
+Create module SORT, which expose the following API:
+class ISORT_API
+{
+//Quick sort algorithm
+  void quick_sort(int a[], int N) = 0;
+//Bubble algorithm
+ void bubble_sort(int a[], int N) = 0;
+

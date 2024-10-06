@@ -9,7 +9,7 @@
 #include "version.h"
 
 using namespace ai_framework_proj;
-class CModuleControl : public IModuleControlAPI
+class CSAMPLE_MODULE : public IModuleControlAPI
 {
 	IModuleControlCallBackAPI* callback_ptr_;
 	ITarget* 	target_ptr_;
@@ -100,7 +100,7 @@ public:
 		strcpy(add_info,TIME_DATE);
 		return E_OK;
 	}
-	CModuleControl(const char *mod_name)
+	CSAMPLE_MODULE(const char *mod_name)
 	{
 		callback_ptr_ = NULL;
 		target_ptr_ = NULL;
@@ -112,12 +112,12 @@ public:
 	}
 };
 
-class CModuleControl     *g_module_ptr = NULL;
+class CSAMPLE_MODULE     *g_module_ptr = NULL;
 
 //API function to connect with ITarget API
 extern "C" uint32_t API_CONNECT_FUNC(void **target_ptr)
 {
-	g_module_ptr = new CModuleControl(MOD_NAME);
+	g_module_ptr = new CSAMPLE_MODULE(MOD_NAME);
 	*target_ptr= static_cast<IModuleControlAPI*>(g_module_ptr);
 	return 0;
 }
