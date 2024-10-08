@@ -1,16 +1,12 @@
 /******************************************************************
  * TB_tables.cc
- * Author:  D. Matas
- * Created: May 7 , 2018
- * Copyright (c) 2018 - 2020 Airspan Networks
- * All Rights Reserved.
- * Confidential and Proprietary - Airspan Networks
+
  *******************************************************************/
 
  #ifndef HANDLER_TB_TABLES_H
  #define HANDLER_TB_TABLES_H
 
-#include "global_defines.inc"
+#include  <cstdint>
 
 #define	NUMBER_OF_MCS_TABLE_1	29
 #define	NUMBER_OF_MCS_TABLE_2	28
