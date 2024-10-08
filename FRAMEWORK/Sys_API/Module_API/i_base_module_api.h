@@ -1,9 +1,6 @@
 /******************************************************************
  * i_base_module_api
  * Author: Igor Shoihet
- * Copyright (c) 2018 - 2020 Airspan Networks
- * All Rights Reserved.
- * Confidential and Proprietary - Airspan Networks
  *******************************************************************/
 
 #ifndef API_MODULE_API_I_BASE_MODULE_API_H_

@@ -2,9 +2,6 @@
  * neon_math.h
  * Author: Elad Cohen
  * Date : 26/5/2018
- * Copyright (c) 2018 - 2020 Airspan Networks
- * All Rights Reserved.
- * Confidential and Proprietary - Airspan Networks
  *******************************************************************/
 
 #ifndef MATH_FUNC_H_

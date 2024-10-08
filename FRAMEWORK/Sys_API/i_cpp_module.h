@@ -1,9 +1,6 @@
 /******************************************************************
  * I_cpp_module.h
  * Author: Igor Shoihet
- * Copyright (c) 2018 - 2020 Airspan Networks
- * All Rights Reserved.
- * Confidential and Proprietary - Airspan Networks
  *******************************************************************/
 #include <time.h>
 

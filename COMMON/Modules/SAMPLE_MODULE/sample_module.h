@@ -2,7 +2,6 @@
 #ifndef MODULES_SAMPLE_MODULE_SAMPLE_MODULE_H_
 #define MODULES_SAMPLE_MODULE_SAMPLE_MODULE_H_
 #include "i_api_common.h"
-#include "i_const_data_api.h"
 #include "i_sample_module_api.h"
 #include "version.h"
 
@@ -23,7 +22,6 @@ class CSAMPLE_MODULE : public CBaseModule, public sample_module_api
     CProfileCnt call_prof_;  //Example of profiler counter
     IModuleControlAPI  *test_module_p_; //Example pointer to module API.
     IModuleControlAPI  *const_data_module_p_;
-    CConst_Data_api *const_api_p_;
 public:
     virtual EResultT IInit(IModuleControlCallBackAPI *callback_ptr, ITarget *target_api, const char *init_info);
     virtual EResultT IColdStart();

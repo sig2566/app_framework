@@ -43,8 +43,8 @@ EResultT CSAMPLE_MODULE::IColdStart()
 		ASSERT(callback_ptr_->IGetModule(const_mod_name, &const_data_module_p_) == E_OK);
 		void *tmp_p;
 		ASSERT(const_data_module_p_->IConfigure(e_GET_API, NULL, &tmp_p) == E_OK);
-		const_api_p_= (CConst_Data_api*)tmp_p;
 		
+
 		return E_OK;
 	}
 EResultT CSAMPLE_MODULE::ICall(uint32_t param)
@@ -134,10 +134,10 @@ EResultT CSAMPLE_MODULE::IConfigure(EConfigId id, void *in, void **out)
 
 uint32_t CSAMPLE_MODULE::calc_sum_uint_16()
 {
-	uint32_t num;
+	uint32_t num=6;
 	int i;
 	uint32_t sum=0;
-	const int16_t *arr_p = const_api_p_->get_INV_FULL_LUT(&num);
+	const int16_t arr_p[] = {1,2,3,4,5,6};
 	for (i=0; i< num; i++)
 	{
 		sum += arr_p[i];
@@ -148,8 +148,6 @@ uint32_t CSAMPLE_MODULE::calc_sum_uint_16()
 CSAMPLE_MODULE::CSAMPLE_MODULE(const char *mod_name)
 	{
 
-		const_api_p_ = NULL;
-		const_data_module_p_ = NULL;
 		in_ptr = NULL;
 		out_ptr = NULL;
 		test_module_p_ = NULL;
@@ -161,7 +159,6 @@ CSAMPLE_MODULE::CSAMPLE_MODULE(const char *mod_name)
 	CSAMPLE_MODULE::CSAMPLE_MODULE()
 	{
 
-		const_api_p_ = NULL;
 		const_data_module_p_ = NULL;
 		in_ptr = NULL;
 		out_ptr = NULL;

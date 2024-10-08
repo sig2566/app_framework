@@ -1,9 +1,6 @@
 /******************************************************************
  * neon_math_api
  * Author: Igor Shoihet
- * Copyright (c) 2018 - 2020 Airspan Networks
- * All Rights Reserved.
- * Confidential and Proprietary - Airspan Networks
  *******************************************************************/
 
 #ifndef API_MATH_API_I_NEON_MATH_API_H_
