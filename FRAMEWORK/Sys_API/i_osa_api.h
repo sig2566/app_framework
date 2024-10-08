@@ -27,7 +27,6 @@
 #endif
 #include <cstdint>
 #include "i_sys_utils.h"
-#include "i_as_phy_common.h"
 /*
  * --------------------------------------------------------------------------------
  * Abstract Wrapper around specific OS features (threads, mutexes, spinlocks, etc.
@@ -70,6 +69,37 @@
  * Type definition section
  * -----------------------------------------------------------
  */
+
+/*-------------- Threads --------------*/
+// Thread priorities.
+typedef enum
+{
+    OSA_PREEMPTIVE = 0,
+    OSA_NON_PREEMPTIVE,
+} OSA_preemp_t;
+
+
+// Thread priorities.
+//Note, currently priorities until OSA_PRIO_LOW ore treated as user priorities and priority above
+//      are treated as REAL TIME priorities
+typedef enum
+{
+    OSA_PRIO_LOWEST = 0,
+    OSA_PRIO_ALMOST_LOWEST,
+    OSA_PRIO_VERY_LOW,
+    OSA_PRIO_ALMOST_VERY_LOW,
+    OSA_PRIO_LOW,
+    OSA_PRIO_ALMOST_LOW,
+    OSA_PRIO_MEDIUM,
+    OSA_PRIO_ALMOST_HIGH,
+    OSA_PRIO_HIGH,
+    OSA_PRIO_ALMOST_VERY_HIGH,
+    OSA_PRIO_VERY_HIGH,
+    OSA_PRIO_ALMOST_HIGHEST,
+    OSA_PRIO_HIGHEST,
+    OSA_PRIO_MAX
+} OSA_prio;
+
 
 typedef enum osa_utl_flags_e
 {
