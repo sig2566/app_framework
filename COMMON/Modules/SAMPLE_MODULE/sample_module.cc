@@ -29,7 +29,6 @@ EResultT CSAMPLE_MODULE::IInit(IModuleControlCallBackAPI *callback_ptr, ITarget 
 EResultT CSAMPLE_MODULE::IColdStart()
 	{
 		const char mod_name[]= "TEST_MODULE";
-		const char const_mod_name[] = "CONST_DATA";
 
 		// Example connection with memory areas
 		MEMAREA_CONNECT("TEST_MEM_AREA_2", &out_ptr, E_READ);	// out_ptr -> TEST_MEM_AREA_2, used for data read
@@ -40,9 +39,6 @@ EResultT CSAMPLE_MODULE::IColdStart()
 
 		//Example of getting pointer to other component API
 		ASSERT(callback_ptr_->IGetModule(mod_name, &test_module_p_) == E_OK);
-		ASSERT(callback_ptr_->IGetModule(const_mod_name, &const_data_module_p_) == E_OK);
-		void *tmp_p;
-		ASSERT(const_data_module_p_->IConfigure(e_GET_API, NULL, &tmp_p) == E_OK);
 		
 
 		return E_OK;

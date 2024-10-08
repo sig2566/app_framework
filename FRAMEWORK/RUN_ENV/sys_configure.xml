@@ -12,11 +12,4 @@
     <info>"Test Module"</info>
   </component>
 
-  <component>
-    <name>CONST_DATA</name>
-	<config>tst</config>
-    <info>"Test Module"</info>
-  </component>
-
-
 </components_list>
